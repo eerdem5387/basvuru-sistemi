@@ -56,6 +56,17 @@ export async function GET() {
     })
   } catch (error) {
     console.error("Excel export hatası:", error)
+    
+    // Prisma connection errors
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'P1001' || error.code === 'P1002') {
+        return NextResponse.json(
+          { error: "Veritabanı bağlantı hatası" },
+          { status: 503 }
+        )
+      }
+    }
+    
     return NextResponse.json(
       { error: "Excel dosyası oluşturulurken bir hata oluştu" },
       { status: 500 }

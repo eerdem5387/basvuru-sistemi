@@ -80,9 +80,25 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Formu eksiksiz ve doğru doldurunuz.", details: error.errors },
+        { error: "Formu eksiksiz ve doğru doldurunuz.", details: error.issues },
         { status: 400 }
       )
+    }
+    
+    // Prisma connection errors
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'P2002') {
+        return NextResponse.json(
+          { error: "Bu TC Kimlik No ile daha önce başvuru yapılmış." },
+          { status: 400 }
+        )
+      }
+      if (error.code === 'P1001' || error.code === 'P1002') {
+        return NextResponse.json(
+          { error: "Veritabanı bağlantı hatası. Lütfen daha sonra tekrar deneyiniz." },
+          { status: 503 }
+        )
+      }
     }
     
     console.error("Başvuru hatası:", error)
