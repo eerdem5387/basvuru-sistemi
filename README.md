@@ -1,36 +1,248 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 Bursluluk Sınavı Başvuru Sistemi
 
-## Getting Started
+Modern ve güvenli bir başvuru sistemi. Next.js 15, TypeScript, Prisma ve Neon Database ile geliştirilmiştir.
 
-First, run the development server:
+## ✨ Özellikler
 
-```bash
+### Kullanıcı Tarafı
+- ✅ Modern ve responsive başvuru formu
+- ✅ Gerçek zamanlı form validasyonu
+- ✅ TC Kimlik No doğrulama algoritması
+- ✅ Rate limiting ile güvenlik
+- ✅ Başarı/hata bildirimleri
+- ✅ Smooth animasyonlar
+
+### Admin Paneli
+- ✅ Güvenli authentication sistemi (NextAuth.js)
+- ✅ Tüm başvuruları listeleme
+- ✅ Gelişmiş arama ve filtreleme
+- ✅ Detaylı başvuru görüntüleme
+- ✅ Excel export özelliği
+- ✅ İstatistikler dashboard
+
+## 🚀 Kurulum
+
+### 1. Projeyi İndirin
+
+\`\`\`bash
+git clone <repository-url>
+cd basvuru-sistemi
+\`\`\`
+
+### 2. Bağımlılıkları Yükleyin
+
+\`\`\`bash
+npm install
+\`\`\`
+
+### 3. Environment Variables
+
+\`.env.local\` dosyasını oluşturun ve aşağıdaki değişkenleri ekleyin:
+
+\`\`\`env
+# Database (Neon PostgreSQL)
+DATABASE_URL="postgresql://username:password@host/database?sslmode=require"
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="güçlü-bir-secret-key-buraya"
+
+# Admin Credentials
+ADMIN_EMAIL="admin@bursluluk.com"
+ADMIN_PASSWORD="güçlü-bir-şifre"
+\`\`\`
+
+### 4. Database Setup
+
+#### Neon Database Oluşturma
+
+1. [Neon Console](https://console.neon.tech) 'a gidin
+2. Yeni bir proje oluşturun
+3. Connection string'i kopyalayın
+4. \`.env.local\` dosyasına \`DATABASE_URL\` olarak ekleyin
+
+#### Database ve Admin Kullanıcısını Oluşturma
+
+\`\`\`bash
+npm run setup
+\`\`\`
+
+Bu komut:
+- Prisma schema'yı database'e push eder
+- Prisma client'ı generate eder
+- İlk admin kullanıcısını oluşturur
+
+### 5. Development Server'ı Başlatın
+
+\`\`\`bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Uygulama [http://localhost:3000](http://localhost:3000) adresinde çalışacaktır.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📚 Kullanım
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Başvuru Yapma
 
-## Learn More
+1. Ana sayfaya ([http://localhost:3000](http://localhost:3000)) gidin
+2. Formu eksiksiz doldurun:
+   - **Okul Seçimi:** 172 Rize okulu arasından arama yaparak seçin
+   - **Meslek Seçimi:** 100+ meslek arasından arama yaparak seçin
+   - **TC Kimlik No:** Gerçek algoritma ile doğrulanır
+3. "Başvuruyu Gönder" butonuna tıklayın
 
-To learn more about Next.js, take a look at the following resources:
+### Admin Paneline Giriş
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. [http://localhost:3000/admin/login](http://localhost:3000/admin/login) adresine gidin
+2. Admin email ve şifrenizi girin
+3. Dashboard'da tüm başvuruları görüntüleyin
+4. "Excel İndir" butonu ile verileri export edin
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔒 Güvenlik Özellikleri
 
-## Deploy on Vercel
+- ✅ NextAuth.js ile güvenli authentication
+- ✅ Bcrypt ile şifre hashleme
+- ✅ Rate limiting (15 dakikada max 3 başvuru)
+- ✅ TC Kimlik No algoritması ile validasyon
+- ✅ Zod ile server-side validasyon
+- ✅ CSRF koruması
+- ✅ Middleware ile route koruması
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ Teknolojiler
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Frontend
+- **Next.js 15** - React framework (App Router)
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Framer Motion** - Animasyonlar
+- **React Hook Form** - Form yönetimi
+- **Zod** - Validasyon
+
+### Backend
+- **Next.js API Routes** - Backend API
+- **Prisma** - ORM
+- **Neon** - PostgreSQL database
+- **NextAuth.js** - Authentication
+- **bcryptjs** - Şifre hashleme
+- **XLSX** - Excel export
+
+## 📁 Proje Yapısı
+
+\`\`\`
+basvuru-sistemi/
+├── app/
+│   ├── api/
+│   │   ├── auth/[...nextauth]/    # NextAuth endpoint
+│   │   ├── basvuru/                # Başvuru API
+│   │   └── admin/                  # Admin API
+│   ├── admin/
+│   │   ├── login/                  # Admin login sayfası
+│   │   └── dashboard/              # Admin dashboard
+│   ├── page.tsx                    # Ana başvuru formu
+│   ├── layout.tsx                  # Root layout
+│   └── providers.tsx               # Session provider
+├── lib/
+│   ├── prisma.ts                   # Prisma client
+│   ├── auth.ts                     # NextAuth config
+│   └── validations.ts              # Zod schemas
+├── prisma/
+│   └── schema.prisma               # Database schema
+├── scripts/
+│   └── create-admin.ts             # Admin oluşturma scripti
+└── types/
+    └── next-auth.d.ts              # NextAuth type definitions
+\`\`\`
+
+## 🚀 Vercel'e Deploy
+
+### 1. GitHub'a Push
+
+\`\`\`bash
+git add .
+git commit -m "Initial commit"
+git push origin main
+\`\`\`
+
+### 2. Vercel'de Proje Oluşturun
+
+1. [Vercel Dashboard](https://vercel.com/dashboard)'a gidin
+2. "New Project" tıklayın
+3. GitHub repository'nizi seçin
+
+### 3. Environment Variables Ekleyin
+
+Vercel dashboard'da aşağıdaki environment variables'ları ekleyin:
+
+- \`DATABASE_URL\` - Neon database connection string
+- \`NEXTAUTH_URL\` - Production URL (örn: https://yourapp.vercel.app)
+- \`NEXTAUTH_SECRET\` - Güçlü bir secret key
+- \`ADMIN_EMAIL\` - Admin email
+- \`ADMIN_PASSWORD\` - Güçlü admin şifresi
+
+### 4. Deploy
+
+Vercel otomatik olarak deploy edecektir.
+
+### 5. Admin Kullanıcısı Oluşturma
+
+İlk deploy'dan sonra, Vercel terminal'den:
+
+\`\`\`bash
+npm run create-admin
+\`\`\`
+
+## 📝 Scriptler
+
+- \`npm run dev\` - Development server
+- \`npm run build\` - Production build
+- \`npm run start\` - Production server
+- \`npm run db:generate\` - Prisma client generate
+- \`npm run db:push\` - Schema'yı database'e push et
+- \`npm run db:migrate\` - Migration oluştur ve çalıştır
+- \`npm run db:studio\` - Prisma Studio aç
+- \`npm run create-admin\` - Admin kullanıcısı oluştur
+- \`npm run setup\` - Tüm setup'ı bir kerede yap
+
+## 🔧 Konfigürasyon
+
+### Form Alanlarını Özelleştirme
+
+\`app/page.tsx\` dosyasındaki \`okullar\`, \`siniflar\` ve \`meslekler\` arraylerini düzenleyebilirsiniz.
+
+**Mevcut Veriler:**
+- 📚 **172 Okul** - Rize'deki tüm resmi okullar (ilkokul, ortaokul, lise)
+- 👔 **100+ Meslek** - Kapsamlı meslek listesi
+- 🎓 **12 Sınıf** - 1-12. sınıflar arası
+
+**Arama Özelliği:**
+Okul ve meslek seçimlerinde otomatik arama özelliği vardır. Kullanıcılar yazarak filtreleme yapabilir.
+
+### Rate Limiting Ayarları
+
+\`app/api/basvuru/route.ts\` dosyasındaki rate limit değerlerini değiştirebilirsiniz.
+
+## 🐛 Troubleshooting
+
+### Database bağlantı hatası
+
+- \`DATABASE_URL\`'in doğru olduğundan emin olun
+- Neon database'in aktif olduğunu kontrol edin
+- \`?sslmode=require\` parametresinin connection string'de olduğundan emin olun
+
+### Admin giriş yapamıyor
+
+- \`npm run create-admin\` komutunu çalıştırın
+- Database'de admin kullanıcısının olduğunu kontrol edin
+- \`NEXTAUTH_SECRET\` environment variable'ının set edildiğinden emin olun
+
+## 📄 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır.
+
+## 👨‍💻 Geliştirici
+
+Sorularınız için iletişime geçin.
+
+## 🙏 Teşekkürler
+
+Bu projeyi kullandığınız için teşekkür ederiz!

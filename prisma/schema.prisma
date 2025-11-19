@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Basvuru {
+  id               String   @id @default(cuid())
+  ogrenciAdSoyad   String
+  ogrenciTc        String   @unique
+  okul             String
+  ogrenciSinifi    String
+  babaAdSoyad      String
+  babaMeslek       String
+  babaIsAdresi     String?
+  babaCepTel       String
+  anneAdSoyad      String
+  anneMeslek       String
+  anneIsAdresi     String?
+  anneCepTel       String
+  email            String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([ogrenciTc])
+  @@index([email])
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
