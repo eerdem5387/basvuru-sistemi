@@ -16,6 +16,7 @@
     "setup": "npm run db:push && npm run db:generate && npm run create-admin"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "framer-motion": "^12.23.24",
     "next": "16.0.3",
     "react": "19.2.0",

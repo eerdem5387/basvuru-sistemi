@@ -1,5 +1,4 @@
 scripts
 *.md
 .env.example
-prisma.config.ts
 
