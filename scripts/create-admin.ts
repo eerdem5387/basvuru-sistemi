@@ -1,6 +1,10 @@
-import 'dotenv/config'
+import { config } from 'dotenv'
 import { prisma } from '../lib/prisma'
 import bcrypt from 'bcryptjs'
+
+// Load .env.local first, then .env
+config({ path: '.env.local' })
+config()
 
 async function main() {
   const email = process.env.ADMIN_EMAIL || 'admin@bursluluk.com'
@@ -13,8 +17,12 @@ async function main() {
   })
 
   if (existingAdmin) {
-    console.log('❌ Admin kullanıcısı zaten mevcut:', email)
-    return
+    console.log('⚠️  Mevcut admin kullanıcısı bulundu, güncelleniyor...')
+    // Delete existing admin
+    await prisma.admin.delete({
+      where: { email }
+    })
+    console.log('✅ Eski admin kullanıcısı silindi')
   }
 
   // Hash password

@@ -32,7 +32,8 @@ export default function AdminLoginPage() {
       router.push('/admin/dashboard')
       router.refresh()
     } catch (error) {
-      setError('Giriş yapılırken bir hata oluştu')
+      console.error('Login error:', error)
+      setError(error instanceof Error ? error.message : 'Giriş yapılırken bir hata oluştu')
     } finally {
       setIsLoading(false)
     }

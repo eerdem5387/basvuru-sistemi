@@ -11,31 +11,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email ve şifre gerekli")
-        }
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email ve şifre gerekli")
+          }
 
-        const admin = await prisma.admin.findUnique({
-          where: { email: credentials.email as string }
-        })
+          const admin = await prisma.admin.findUnique({
+            where: { email: credentials.email as string }
+          })
 
-        if (!admin) {
-          throw new Error("Geçersiz email veya şifre")
-        }
+          if (!admin) {
+            throw new Error("Geçersiz email veya şifre")
+          }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password as string,
-          admin.password
-        )
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password as string,
+            admin.password
+          )
 
-        if (!isPasswordValid) {
-          throw new Error("Geçersiz email veya şifre")
-        }
+          if (!isPasswordValid) {
+            throw new Error("Geçersiz email veya şifre")
+          }
 
-        return {
-          id: admin.id,
-          email: admin.email,
-          name: admin.name,
+          return {
+            id: admin.id,
+            email: admin.email,
+            name: admin.name,
+          }
+        } catch (error) {
+          console.error("Auth error:", error)
+          throw error
         }
       }
     })
@@ -62,5 +67,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }
   },
   secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
 })
 
