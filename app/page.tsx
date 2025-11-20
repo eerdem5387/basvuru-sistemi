@@ -381,8 +381,19 @@ export default function HomePage() {
       setOkulSearch('')
       setBabaMeslekSearch('')
       setAnneMeslekSearch('')
+
+      // 5 saniye sonra success mesajını kaldır
+      setTimeout(() => {
+        setSubmitSuccess(false)
+      }, 5000)
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : 'Bir hata oluştu')
+      const errorMessage = error instanceof Error ? error.message : 'Bir hata oluştu'
+      setSubmitError(errorMessage)
+      
+      // 5 saniye sonra hata mesajını kaldır
+      setTimeout(() => {
+        setSubmitError(null)
+      }, 5000)
     } finally {
       setIsSubmitting(false)
     }
@@ -436,20 +447,34 @@ export default function HomePage() {
         </div>
         )}
 
-        {/* Error Message */}
+        {/* Error Modal */}
         {submitError && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg"
-          >
-            <div className="flex items-center">
-              <svg className="w-6 h-6 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              <p className="text-red-800">{submitError}</p>
-            </div>
-          </motion.div>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center"
+            >
+              <div className="mb-4">
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100">
+                  <svg className="h-10 w-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Başvuru Başarısız!</h3>
+              <p className="text-gray-600 mb-6">
+                {submitError}
+              </p>
+              <button
+                onClick={() => setSubmitError(null)}
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-6 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition duration-200"
+              >
+                Tamam
+              </button>
+            </motion.div>
+          </div>
         )}
 
         {/* Form */}
