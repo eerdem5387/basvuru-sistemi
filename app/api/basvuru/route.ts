@@ -44,9 +44,9 @@ export async function POST(request: Request) {
     // Validasyon
     const validatedData = basvuruSchema.parse(body)
     
-    // Telefon numaralarını düzelt (başında +90 veya 0 varsa kaldır)
-    const babaCepTel = validatedData.babaCepTel.replace(/^(\+90|0)/, '')
-    const anneCepTel = validatedData.anneCepTel.replace(/^(\+90|0)/, '')
+    // Telefon numaraları zaten 10 hane olarak geliyor (frontend'de kontrol ediliyor)
+    const babaCepTel = validatedData.babaCepTel
+    const anneCepTel = validatedData.anneCepTel
     
     // TC Kimlik No ile daha önce başvuru yapılmış mı kontrol et
     const existingBasvuru = await prisma.basvuru.findUnique({

@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import * as XLSX from "xlsx"
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await auth()
     
@@ -14,7 +14,36 @@ export async function GET() {
       )
     }
     
+    // Query parametrelerini al
+    const { searchParams } = new URL(request.url)
+    const tarihBaslangic = searchParams.get('tarihBaslangic')
+    const tarihBitis = searchParams.get('tarihBitis')
+    const sinif = searchParams.get('sinif')
+    const okul = searchParams.get('okul')
+    
+    // Filtreleme için where koşulları
+    const where: any = {}
+    
+    if (tarihBaslangic || tarihBitis) {
+      where.createdAt = {}
+      if (tarihBaslangic) {
+        where.createdAt.gte = new Date(tarihBaslangic)
+      }
+      if (tarihBitis) {
+        where.createdAt.lte = new Date(tarihBitis + 'T23:59:59')
+      }
+    }
+    
+    if (sinif) {
+      where.ogrenciSinifi = sinif
+    }
+    
+    if (okul) {
+      where.okul = okul
+    }
+    
     const basvurular = await prisma.basvuru.findMany({
+      where: Object.keys(where).length > 0 ? where : undefined,
       orderBy: {
         createdAt: 'desc'
       }

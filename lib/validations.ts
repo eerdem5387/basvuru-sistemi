@@ -53,7 +53,9 @@ export const basvuruSchema = z.object({
     .optional(),
   
   babaCepTel: z.string()
-    .regex(/^(\+90|0)?5\d{9}$/, "Geçerli bir cep telefonu numarası giriniz (5XXXXXXXXX)"),
+    .min(10, "Telefon numarası en az 10 haneli olmalıdır")
+    .max(10, "Telefon numarası en fazla 10 haneli olmalıdır")
+    .regex(/^5\d{9}$/, "Geçerli bir cep telefonu numarası giriniz (5XXXXXXXXX - tam 10 hane)"),
   
   anneAdSoyad: z.string()
     .min(3, "Anne adı soyadı en az 3 karakter olmalıdır")
@@ -68,7 +70,9 @@ export const basvuruSchema = z.object({
     .optional(),
   
   anneCepTel: z.string()
-    .regex(/^(\+90|0)?5\d{9}$/, "Geçerli bir cep telefonu numarası giriniz (5XXXXXXXXX)"),
+    .min(10, "Telefon numarası en az 10 haneli olmalıdır")
+    .max(10, "Telefon numarası en fazla 10 haneli olmalıdır")
+    .regex(/^5\d{9}$/, "Geçerli bir cep telefonu numarası giriniz (5XXXXXXXXX - tam 10 hane)"),
   
   email: z.string()
     .email("Geçerli bir e-posta adresi giriniz")

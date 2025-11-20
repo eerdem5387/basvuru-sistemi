@@ -34,6 +34,11 @@ export default function AdminDashboard() {
   const [selectedBasvuru, setSelectedBasvuru] = useState<Basvuru | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [isExporting, setIsExporting] = useState(false)
+  const [filterTarihBaslangic, setFilterTarihBaslangic] = useState('')
+  const [filterTarihBitis, setFilterTarihBitis] = useState('')
+  const [filterSinif, setFilterSinif] = useState('')
+  const [filterOkul, setFilterOkul] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -68,7 +73,14 @@ export default function AdminDashboard() {
   const handleExport = async () => {
     try {
       setIsExporting(true)
-      const response = await fetch('/api/admin/export')
+      // Filtre parametrelerini query string olarak gönder
+      const params = new URLSearchParams()
+      if (filterTarihBaslangic) params.append('tarihBaslangic', filterTarihBaslangic)
+      if (filterTarihBitis) params.append('tarihBitis', filterTarihBitis)
+      if (filterSinif) params.append('sinif', filterSinif)
+      if (filterOkul) params.append('okul', filterOkul)
+      
+      const response = await fetch(`/api/admin/export?${params.toString()}`)
       
       if (!response.ok) {
         throw new Error('Excel dosyası oluşturulamadı')
@@ -78,7 +90,8 @@ export default function AdminDashboard() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `basvurular-${new Date().toISOString().split('T')[0]}.xlsx`
+      const filterSuffix = filterTarihBaslangic || filterTarihBitis || filterSinif || filterOkul ? '-filtrelenmis' : ''
+      a.download = `basvurular${filterSuffix}-${new Date().toISOString().split('T')[0]}.xlsx`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -90,18 +103,44 @@ export default function AdminDashboard() {
     }
   }
 
+  const clearFilters = () => {
+    setFilterTarihBaslangic('')
+    setFilterTarihBitis('')
+    setFilterSinif('')
+    setFilterOkul('')
+    setSearchTerm('')
+  }
+
   const handleLogout = async () => {
     await signOut({ redirect: true, callbackUrl: '/admin/login' })
   }
 
+  // Benzersiz okul ve sınıf listeleri
+  const uniqueOkullar = Array.from(new Set(basvurular.map(b => b.okul))).sort()
+  const uniqueSiniflar = Array.from(new Set(basvurular.map(b => b.ogrenciSinifi))).sort()
+
   const filteredBasvurular = basvurular.filter((b) => {
+    // Arama filtresi
     const search = searchTerm.toLowerCase()
-    return (
+    const matchesSearch = !searchTerm || (
       b.ogrenciAdSoyad.toLowerCase().includes(search) ||
       b.ogrenciTc.includes(search) ||
       b.email.toLowerCase().includes(search) ||
       b.okul.toLowerCase().includes(search)
     )
+
+    // Tarih filtresi
+    const basvuruTarihi = new Date(b.createdAt)
+    const matchesTarihBaslangic = !filterTarihBaslangic || basvuruTarihi >= new Date(filterTarihBaslangic)
+    const matchesTarihBitis = !filterTarihBitis || basvuruTarihi <= new Date(filterTarihBitis + 'T23:59:59')
+
+    // Sınıf filtresi
+    const matchesSinif = !filterSinif || b.ogrenciSinifi === filterSinif
+
+    // Okul filtresi
+    const matchesOkul = !filterOkul || b.okul === filterOkul
+
+    return matchesSearch && matchesTarihBaslangic && matchesTarihBitis && matchesSinif && matchesOkul
   })
 
   if (status === 'loading' || isLoading) {
@@ -220,23 +259,121 @@ export default function AdminDashboard() {
 
         {/* Search */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Öğrenci adı, TC, email veya okul ile ara..."
-              className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-            />
-            <svg
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Öğrenci adı, TC, email veya okul ile ara..."
+                className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+              />
+              <svg
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200 flex items-center space-x-2"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              <span>Filtrele</span>
+            </button>
+            {(filterTarihBaslangic || filterTarihBitis || filterSinif || filterOkul) && (
+              <button
+                onClick={clearFilters}
+                className="px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-200 flex items-center space-x-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Filtreleri Temizle</span>
+              </button>
+            )}
           </div>
+
+          {/* Filters Panel */}
+          {showFilters && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="border-t border-gray-200 pt-4 mt-4"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Tarih Başlangıç */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Başlangıç Tarihi
+                  </label>
+                  <input
+                    type="date"
+                    value={filterTarihBaslangic}
+                    onChange={(e) => setFilterTarihBaslangic(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Tarih Bitiş */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bitiş Tarihi
+                  </label>
+                  <input
+                    type="date"
+                    value={filterTarihBitis}
+                    onChange={(e) => setFilterTarihBitis(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Sınıf Filtresi */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sınıf
+                  </label>
+                  <select
+                    value={filterSinif}
+                    onChange={(e) => setFilterSinif(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
+                    <option value="">Tüm Sınıflar</option>
+                    {uniqueSiniflar.map((sinif) => (
+                      <option key={sinif} value={sinif}>
+                        {sinif}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Okul Filtresi */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Okul
+                  </label>
+                  <select
+                    value={filterOkul}
+                    onChange={(e) => setFilterOkul(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
+                    <option value="">Tüm Okullar</option>
+                    {uniqueOkullar.map((okul) => (
+                      <option key={okul} value={okul}>
+                        {okul}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* Applications Table */}

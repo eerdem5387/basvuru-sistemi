@@ -180,9 +180,6 @@ const okullar = [
 ]
 
 const siniflar = [
-  '1. Sınıf',
-  '2. Sınıf',
-  '3. Sınıf',
   '4. Sınıf',
   '5. Sınıf',
   '6. Sınıf',
@@ -191,7 +188,6 @@ const siniflar = [
   '9. Sınıf',
   '10. Sınıf',
   '11. Sınıf',
-  '12. Sınıf',
 ]
 
 const meslekler = [
@@ -385,11 +381,6 @@ export default function HomePage() {
       setOkulSearch('')
       setBabaMeslekSearch('')
       setAnneMeslekSearch('')
-      
-      // 5 saniye sonra success mesajını kaldır
-      setTimeout(() => {
-        setSubmitSuccess(false)
-      }, 5000)
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : 'Bir hata oluştu')
     } finally {
@@ -415,23 +406,34 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Success Message */}
+        {/* Success Modal */}
         {submitSuccess && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg"
-          >
-            <div className="flex items-center">
-              <svg className="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <div>
-                <p className="text-green-800 font-semibold">Başvurunuz başarıyla alındı!</p>
-                <p className="text-green-700 text-sm">Teşekkür ederiz.</p>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center"
+            >
+              <div className="mb-4">
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
+                  <svg className="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
               </div>
-            </div>
-          </motion.div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Başvurunuz Başarıyla Alındı!</h3>
+              <p className="text-gray-600 mb-6">
+                Başvurunuz sisteme kaydedilmiştir. Teşekkür ederiz.
+              </p>
+              <button
+                onClick={() => setSubmitSuccess(false)}
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition duration-200"
+              >
+                Tamam
+              </button>
+            </motion.div>
+        </div>
         )}
 
         {/* Error Message */}
@@ -620,8 +622,15 @@ export default function HomePage() {
                   <input
                     type="tel"
                     {...register('babaCepTel')}
+                    maxLength={10}
+                    minLength={10}
+                    onChange={(e) => {
+                      // Sadece rakamları al
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 10)
+                      setValue('babaCepTel', value)
+                    }}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                    placeholder="5XXXXXXXXX"
+                    placeholder="5XXXXXXXXX (10 hane)"
                   />
                   {errors.babaCepTel && (
                     <p className="mt-1 text-sm text-red-600">{errors.babaCepTel.message}</p>
@@ -713,8 +722,15 @@ export default function HomePage() {
                   <input
                     type="tel"
                     {...register('anneCepTel')}
+                    maxLength={10}
+                    minLength={10}
+                    onChange={(e) => {
+                      // Sadece rakamları al
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 10)
+                      setValue('anneCepTel', value)
+                    }}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                    placeholder="5XXXXXXXXX"
+                    placeholder="5XXXXXXXXX (10 hane)"
                   />
                   {errors.anneCepTel && (
                     <p className="mt-1 text-sm text-red-600">{errors.anneCepTel.message}</p>
