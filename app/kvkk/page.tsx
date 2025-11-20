@@ -92,14 +92,14 @@ export default function KVKKPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Kişisel Verilerin Toplanma Yöntemi</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Kişisel Verilerin Toplanma Yöntemi</h2>
               <p>
                 Kişisel verileriniz, başvuru formu aracılığıyla elektronik ortamda, doğrudan sizden toplanmaktadır.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Kişisel Verilerin Saklanma Süresi</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Kişisel Verilerin Saklanma Süresi</h2>
               <p>
                 Kişisel verileriniz, KVKK ve ilgili mevzuat hükümlerine uygun olarak, işlenme amaçlarının gerektirdiği 
                 süre boyunca saklanacaktır. Bu süre, yasal saklama sürelerinin sona ermesi veya işleme amacının 
@@ -108,7 +108,7 @@ export default function KVKKPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">8. KVKK Kapsamındaki Haklarınız</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">7. KVKK Kapsamındaki Haklarınız</h2>
               <p>KVKK Madde 11 uyarınca, kişisel verileriniz hakkında aşağıdaki haklara sahipsiniz:</p>
               <ul className="list-disc pl-6 space-y-2 mt-4">
                 <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
@@ -124,7 +124,7 @@ export default function KVKKPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Haklarınızı Kullanma Yöntemi</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Haklarınızı Kullanma Yöntemi</h2>
               <p>
                 KVKK kapsamındaki haklarınızı kullanmak için, kimliğinizi tespit edici belgelerle birlikte, 
                 yazılı olarak veya kayıtlı elektronik posta (KEP) adresi, güvenli elektronik imza, mobil imza 
@@ -134,7 +134,7 @@ export default function KVKKPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">10. İletişim Bilgileri</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">9. İletişim Bilgileri</h2>
               <p>
                 Kişisel verilerinizin korunması ile ilgili sorularınız, talepleriniz ve şikayetleriniz için 
                 aşağıdaki iletişim bilgilerini kullanabilirsiniz:
@@ -146,7 +146,7 @@ export default function KVKKPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Değişiklikler</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Değişiklikler</h2>
               <p>
                 Bu aydınlatma metni, KVKK ve ilgili mevzuatta yapılabilecek değişiklikler veya işleme amaçlarımızda 
                 meydana gelebilecek değişiklikler nedeniyle güncellenebilir. Güncel versiyon her zaman bu sayfada 
