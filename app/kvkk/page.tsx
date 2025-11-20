@@ -92,19 +92,6 @@ export default function KVKKPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Kişisel Verilerin Aktarılması</h2>
-              <p>
-                Kişisel verileriniz, yukarıda belirtilen amaçlar doğrultusunda, yasal yükümlülüklerimiz çerçevesinde 
-                ve/veya hizmet kalitesinin artırılması amacıyla, aşağıdaki kategorilerdeki kişi ve kuruluşlara aktarılabilir:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mt-4">
-                <li>Yasal yükümlülüklerin yerine getirilmesi amacıyla ilgili kamu kurum ve kuruluşları</li>
-                <li>Hizmet sağlayıcılarımız (hosting, veritabanı vb.)</li>
-                <li>Yasal danışmanlar ve denetim firmaları</li>
-              </ul>
-            </section>
-
-            <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Kişisel Verilerin Toplanma Yöntemi</h2>
               <p>
                 Kişisel verileriniz, başvuru formu aracılığıyla elektronik ortamda, doğrudan sizden toplanmaktadır.
