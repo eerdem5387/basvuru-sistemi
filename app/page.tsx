@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { basvuruSchema, type BasvuruFormData } from '@/lib/validations'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 const okullar = [
   // ARDEŞEN
@@ -317,6 +318,7 @@ export default function HomePage() {
   const [okulSearch, setOkulSearch] = useState('')
   const [babaMeslekSearch, setBabaMeslekSearch] = useState('')
   const [anneMeslekSearch, setAnneMeslekSearch] = useState('')
+  const [kvkkOnay, setKvkkOnay] = useState(false)
 
   const {
     register,
@@ -431,9 +433,6 @@ export default function HomePage() {
                 <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">
                   Levent Koleji
                 </h2>
-                <p className="text-sm text-gray-600 hidden sm:block">
-                  Eğitimde Öncü
-                </p>
               </div>
             </div>
             
@@ -446,7 +445,7 @@ export default function HomePage() {
                 Bursluluk Sınavı Başvuru Sistemi
               </h1>
               <p className="text-gray-600 text-sm sm:text-base">
-                2025 Yılı Bursluluk Sınavı İçin Başvuru Formu
+                2026 - 2027 Yılı Bursluluk Sınavı İçin Başvuru Formu
               </p>
             </div>
           </div>
@@ -880,11 +879,40 @@ export default function HomePage() {
               </div>
             </section>
 
+            {/* KVKK Onay */}
+            <div className="pt-6 pb-4">
+              <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                <input
+                  type="checkbox"
+                  id="kvkkOnay"
+                  checked={kvkkOnay}
+                  onChange={(e) => setKvkkOnay(e.target.checked)}
+                  className="mt-1 h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+                />
+                <label htmlFor="kvkkOnay" className="flex-1 text-sm text-gray-700 cursor-pointer">
+                  <span className="text-red-500 font-semibold">*</span>{' '}
+                  <Link 
+                    href="/kvkk" 
+                    target="_blank"
+                    className="text-indigo-600 hover:text-indigo-700 underline font-medium"
+                  >
+                    Kişisel Verilerin Korunması Kanunu (KVKK) Aydınlatma Metni
+                  </Link>
+                  {' '}ni okudum, anladım ve kişisel verilerimin işlenmesine onay veriyorum.
+                </label>
+              </div>
+              {!kvkkOnay && (
+                <p className="mt-2 text-sm text-red-600">
+                  Başvuruyu göndermek için KVKK aydınlatma metnini okumanız ve onaylamanız gerekmektedir.
+                </p>
+              )}
+            </div>
+
             {/* Submit Button */}
-            <div className="pt-6">
+            <div className="pt-2">
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !kvkkOnay}
                 className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg shadow-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
@@ -909,7 +937,7 @@ export default function HomePage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600 text-sm">
-          <p>© 2025 Bursluluk Sınavı Başvuru Sistemi. Tüm hakları saklıdır.</p>
+          <p>© 2025 Levent Koleji Başvuru Sistemi. Tüm hakları saklıdır.</p>
         </div>
       </main>
     </div>
