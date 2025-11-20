@@ -313,7 +313,7 @@ const meslekler = [
 export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
-  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [submitError, setSubmitError] = useState<{ message: string; details?: Array<{ path: string[]; message: string }> } | null>(null)
   const [okulSearch, setOkulSearch] = useState('')
   const [babaMeslekSearch, setBabaMeslekSearch] = useState('')
   const [anneMeslekSearch, setAnneMeslekSearch] = useState('')
@@ -373,7 +373,11 @@ export default function HomePage() {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || 'Başvuru gönderilemedi')
+        // API'den gelen hata mesajı ve detayları
+        throw {
+          message: result.error || 'Başvuru gönderilemedi',
+          details: result.details || null
+        }
       }
 
       setSubmitSuccess(true)
@@ -387,8 +391,17 @@ export default function HomePage() {
         setSubmitSuccess(false)
       }, 5000)
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Bir hata oluştu'
-      setSubmitError(errorMessage)
+      // Hata objesi veya Error instance'ı kontrolü
+      if (error && typeof error === 'object' && 'message' in error) {
+        setSubmitError({
+          message: error.message as string,
+          details: 'details' in error ? (error.details as Array<{ path: string[]; message: string }>) : undefined
+        })
+      } else {
+        setSubmitError({
+          message: error instanceof Error ? error.message : 'Bir hata oluştu'
+        })
+      }
       
       // 5 saniye sonra hata mesajını kaldır
       setTimeout(() => {
@@ -454,19 +467,59 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center"
+              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8"
             >
-              <div className="mb-4">
-                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100">
+              <div className="text-center mb-4">
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
                   <svg className="h-10 w-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Başvuru Başarısız!</h3>
+                <p className="text-red-600 font-semibold mb-4">
+                  {submitError.message}
+                </p>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Başvuru Başarısız!</h3>
-              <p className="text-gray-600 mb-6">
-                {submitError}
-              </p>
+              
+              {/* Hata Detayları */}
+              {submitError.details && submitError.details.length > 0 && (
+                <div className="mb-6 text-left">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Hata Detayları:</h4>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-h-60 overflow-y-auto">
+                    <ul className="space-y-2">
+                      {submitError.details.map((detail, index) => {
+                        const fieldName = detail.path.join('.')
+                        // Türkçe alan isimleri
+                        const fieldNames: { [key: string]: string } = {
+                          'ogrenciAdSoyad': 'Öğrenci Ad Soyad',
+                          'ogrenciTc': 'TC Kimlik No',
+                          'okul': 'Okul',
+                          'ogrenciSinifi': 'Sınıf',
+                          'babaAdSoyad': 'Baba Ad Soyad',
+                          'babaMeslek': 'Baba Meslek',
+                          'babaIsAdresi': 'Baba İş Adresi',
+                          'babaCepTel': 'Baba Cep Telefonu',
+                          'anneAdSoyad': 'Anne Ad Soyad',
+                          'anneMeslek': 'Anne Meslek',
+                          'anneIsAdresi': 'Anne İş Adresi',
+                          'anneCepTel': 'Anne Cep Telefonu',
+                          'email': 'E-posta',
+                        }
+                        const displayName = fieldNames[fieldName] || fieldName
+                        return (
+                          <li key={index} className="flex items-start">
+                            <span className="text-red-500 mr-2">•</span>
+                            <span className="text-sm text-gray-700">
+                              <span className="font-semibold">{displayName}:</span> {detail.message}
+                            </span>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              )}
+              
               <button
                 onClick={() => setSubmitError(null)}
                 className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-6 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition duration-200"
