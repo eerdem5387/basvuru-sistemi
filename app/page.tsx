@@ -417,13 +417,38 @@ export default function HomePage() {
       {/* Header */}
       <header className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-              Bursluluk Sınavı Başvuru Sistemi
-          </h1>
-            <p className="text-gray-600 text-sm sm:text-base">
-              2025 Yılı Bursluluk Sınavı İçin Başvuru Formu
-            </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="relative h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
+                <img 
+                  src="/logo.png" 
+                  alt="Levent Koleji Logo" 
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              <div className="text-left">
+                <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">
+                  Levent Koleji
+                </h2>
+                <p className="text-sm text-gray-600 hidden sm:block">
+                  Eğitimde Öncü
+                </p>
+              </div>
+            </div>
+            
+            {/* Divider */}
+            <div className="hidden sm:block h-16 w-px bg-gray-300"></div>
+            
+            {/* Başvuru Başlığı */}
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                Bursluluk Sınavı Başvuru Sistemi
+              </h1>
+              <p className="text-gray-600 text-sm sm:text-base">
+                2025 Yılı Bursluluk Sınavı İçin Başvuru Formu
+              </p>
+            </div>
           </div>
         </div>
       </header>

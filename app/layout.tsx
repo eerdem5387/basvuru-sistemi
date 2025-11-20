@@ -8,8 +8,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Bursluluk Sınavı Başvuru Sistemi",
-  description: "2025 Yılı Bursluluk Sınavı İçin Başvuru Formu",
+  title: "Bursluluk Sınavı Başvuru Sistemi - Levent Koleji",
+  description: "2025 Yılı Bursluluk Sınavı İçin Başvuru Formu - Levent Koleji",
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({
