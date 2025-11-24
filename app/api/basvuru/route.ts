@@ -72,10 +72,24 @@ export async function POST(request: Request) {
     
     // Webhook'u asenkron olarak gönder (kullanıcıyı bekletme)
     // Hata olsa bile başvuru kaydedildi, webhook başarısız olabilir
-    sendWebhook(formatBasvuruForWebhook(basvuru)).catch((error) => {
-      // Webhook hatası loglanır ama kullanıcıya gösterilmez
-      console.error('[Webhook] Asenkron gönderim hatası:', error)
+    console.log('[Başvuru] Webhook gönderiliyor...', {
+      basvuruId: basvuru.id,
+      webhookUrl: process.env.WEBHOOK_URL || 'TANIMLI DEĞİL',
+      hasSecret: !!process.env.WEBHOOK_SECRET
     })
+    
+    sendWebhook(formatBasvuruForWebhook(basvuru))
+      .then((result) => {
+        if (result.success) {
+          console.log('[Başvuru] ✅ Webhook başarıyla gönderildi:', basvuru.id)
+        } else {
+          console.error('[Başvuru] ❌ Webhook gönderilemedi:', result.error, 'Retries:', result.retries)
+        }
+      })
+      .catch((error) => {
+        // Webhook hatası loglanır ama kullanıcıya gösterilmez
+        console.error('[Başvuru] ❌ Webhook asenkron gönderim hatası:', error)
+      })
     
     return NextResponse.json(
       { 

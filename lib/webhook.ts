@@ -39,8 +39,9 @@ export async function sendWebhook(
 
   // Webhook URL yapılandırılmamışsa sessizce başarılı döner (opsiyonel özellik)
   if (!webhookUrl) {
-    console.log('[Webhook] WEBHOOK_URL tanımlı değil, webhook gönderilmedi')
-    return { success: true }
+    console.error('[Webhook] ❌ WEBHOOK_URL tanımlı değil, webhook gönderilmedi!')
+    console.error('[Webhook] ⚠️  Vercel Dashboard → Settings → Environment Variables → WEBHOOK_URL ekleyin')
+    return { success: false, error: 'WEBHOOK_URL tanımlı değil' }
   }
 
   if (!webhookSecret) {
