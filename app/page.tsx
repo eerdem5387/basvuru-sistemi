@@ -570,6 +570,10 @@ export default function HomePage() {
                   <input
                     type="text"
                     {...register('ogrenciAdSoyad')}
+                    onChange={(e) => {
+                      const value = e.target.value.toUpperCase()
+                      setValue('ogrenciAdSoyad', value)
+                    }}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                     placeholder="Örn: Ahmet Yılmaz"
                   />
@@ -669,6 +673,10 @@ export default function HomePage() {
                   <input
                     type="text"
                     {...register('babaAdSoyad')}
+                    onChange={(e) => {
+                      const value = e.target.value.toUpperCase()
+                      setValue('babaAdSoyad', value)
+                    }}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                     placeholder="Örn: Mehmet Yılmaz"
                   />
@@ -769,6 +777,10 @@ export default function HomePage() {
                   <input
                     type="text"
                     {...register('anneAdSoyad')}
+                    onChange={(e) => {
+                      const value = e.target.value.toUpperCase()
+                      setValue('anneAdSoyad', value)
+                    }}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                     placeholder="Örn: Ayşe Yılmaz"
                   />
