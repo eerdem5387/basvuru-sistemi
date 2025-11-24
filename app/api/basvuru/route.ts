@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { basvuruSchema } from "@/lib/validations"
 import { z } from "zod"
+import { sendWebhook, formatBasvuruForWebhook } from "@/lib/webhook"
 
 // Rate limiting için basit bir in-memory cache
 const rateLimit = new Map<string, { count: number; resetTime: number }>()
@@ -67,6 +68,13 @@ export async function POST(request: Request) {
         babaCepTel,
         anneCepTel,
       }
+    })
+    
+    // Webhook'u asenkron olarak gönder (kullanıcıyı bekletme)
+    // Hata olsa bile başvuru kaydedildi, webhook başarısız olabilir
+    sendWebhook(formatBasvuruForWebhook(basvuru)).catch((error) => {
+      // Webhook hatası loglanır ama kullanıcıya gösterilmez
+      console.error('[Webhook] Asenkron gönderim hatası:', error)
     })
     
     return NextResponse.json(
