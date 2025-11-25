@@ -12,13 +12,14 @@ interface Basvuru {
   ogrenciTc: string
   okul: string
   ogrenciSinifi: string
+  ogrenciSube: string
   babaAdSoyad: string
   babaMeslek: string
-  babaIsAdresi: string | null
+  babaIsAdresi: string
   babaCepTel: string
   anneAdSoyad: string
   anneMeslek: string
-  anneIsAdresi: string | null
+  anneIsAdresi: string
   anneCepTel: string
   email: string
   createdAt: string
@@ -423,7 +424,9 @@ export default function AdminDashboard() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{basvuru.okul}</div>
-                        <div className="text-sm text-gray-500">{basvuru.ogrenciSinifi}</div>
+                        <div className="text-sm text-gray-500">
+                          {basvuru.ogrenciSinifi} · {basvuru.ogrenciSube} Şubesi
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{basvuru.email}</div>
@@ -487,8 +490,10 @@ export default function AdminDashboard() {
                     <p className="font-medium text-gray-900">{selectedBasvuru.okul}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Sınıf</p>
-                    <p className="font-medium text-gray-900">{selectedBasvuru.ogrenciSinifi}</p>
+                    <p className="text-sm text-gray-600">Sınıf / Şube</p>
+                    <p className="font-medium text-gray-900">
+                      {selectedBasvuru.ogrenciSinifi} · {selectedBasvuru.ogrenciSube} Şubesi
+                    </p>
                   </div>
                 </div>
               </div>

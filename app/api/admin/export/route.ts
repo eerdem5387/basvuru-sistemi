@@ -56,6 +56,7 @@ export async function GET(request: Request) {
       'TC Kimlik No': b.ogrenciTc,
       'Okul': b.okul,
       'Sınıf': b.ogrenciSinifi,
+      'Şube': b.ogrenciSube,
       'Baba Ad Soyad': b.babaAdSoyad,
       'Baba Meslek': b.babaMeslek,
       'Baba İş Adresi': b.babaIsAdresi || '-',

@@ -8,13 +8,14 @@ interface WebhookPayload {
   ogrenciTc: string
   okul: string
   ogrenciSinifi: string
+  ogrenciSube: string
   babaAdSoyad: string
   babaMeslek: string
-  babaIsAdresi: string | null
+  babaIsAdresi: string
   babaCepTel: string
   anneAdSoyad: string
   anneMeslek: string
-  anneIsAdresi: string | null
+  anneIsAdresi: string
   anneCepTel: string
   email: string
   createdAt: string
@@ -135,6 +136,7 @@ export function formatBasvuruForWebhook(basvuru: any): WebhookPayload {
     ogrenciTc: basvuru.ogrenciTc,
     okul: basvuru.okul,
     ogrenciSinifi: basvuru.ogrenciSinifi,
+    ogrenciSube: basvuru.ogrenciSube,
     babaAdSoyad: basvuru.babaAdSoyad,
     babaMeslek: basvuru.babaMeslek,
     babaIsAdresi: basvuru.babaIsAdresi,

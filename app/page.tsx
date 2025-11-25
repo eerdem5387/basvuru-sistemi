@@ -191,6 +191,8 @@ const siniflar = [
   '11. Sınıf',
 ]
 
+const subeler = Array.from({ length: 26 }, (_, index) => String.fromCharCode(65 + index))
+
 const meslekler = [
   'Acil Tıp Teknisyeni',
   'Anaokulu Öğretmeni',
@@ -519,6 +521,7 @@ export default function HomePage() {
                           'ogrenciTc': 'TC Kimlik No',
                           'okul': 'Okul',
                           'ogrenciSinifi': 'Sınıf',
+                          'ogrenciSube': 'Sınıf Şubesi',
                           'babaAdSoyad': 'Baba Ad Soyad',
                           'babaMeslek': 'Baba Meslek',
                           'babaIsAdresi': 'Baba İş Adresi',
@@ -615,6 +618,26 @@ export default function HomePage() {
                   </select>
                   {errors.ogrenciSinifi && (
                     <p className="mt-1 text-sm text-red-600">{errors.ogrenciSinifi.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sınıf Şubesi <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    {...register('ogrenciSube')}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                  >
+                    <option value="">Seçiniz</option>
+                    {subeler.map((sube) => (
+                      <option key={sube} value={sube}>
+                        {sube} Şubesi
+                      </option>
+                    ))}
+                  </select>
+                  {errors.ogrenciSube && (
+                    <p className="mt-1 text-sm text-red-600">{errors.ogrenciSube.message}</p>
                   )}
                 </div>
 
@@ -749,13 +772,13 @@ export default function HomePage() {
 
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    İş Adresi
+                    İş Adresi <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     {...register('babaIsAdresi')}
                     rows={3}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                    placeholder="İş adresi bilgisi (opsiyonel)"
+                    placeholder="İş adresi bilgisi"
                   />
                   {errors.babaIsAdresi && (
                     <p className="mt-1 text-sm text-red-600">{errors.babaIsAdresi.message}</p>
@@ -853,13 +876,13 @@ export default function HomePage() {
 
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    İş Adresi
+                    İş Adresi <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     {...register('anneIsAdresi')}
                     rows={3}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                    placeholder="İş adresi bilgisi (opsiyonel)"
+                    placeholder="İş adresi bilgisi"
                   />
                   {errors.anneIsAdresi && (
                     <p className="mt-1 text-sm text-red-600">{errors.anneIsAdresi.message}</p>

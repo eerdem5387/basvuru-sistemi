@@ -39,6 +39,9 @@ export const basvuruSchema = z.object({
   
   ogrenciSinifi: z.string()
     .min(1, "Sınıf seçimi zorunludur"),
+
+  ogrenciSube: z.string()
+    .min(1, "Şube seçimi zorunludur"),
   
   babaAdSoyad: z.string()
     .min(3, "Baba adı soyadı en az 3 karakter olmalıdır")
@@ -49,8 +52,8 @@ export const basvuruSchema = z.object({
     .min(1, "Baba meslek seçimi zorunludur"),
   
   babaIsAdresi: z.string()
-    .max(500, "Baba iş adresi en fazla 500 karakter olabilir")
-    .optional(),
+    .min(15, "Baba iş adresi en az 15 karakter olmalıdır")
+    .max(500, "Baba iş adresi en fazla 500 karakter olabilir"),
   
   babaCepTel: z.string()
     .min(10, "Telefon numarası en az 10 haneli olmalıdır")
@@ -66,8 +69,8 @@ export const basvuruSchema = z.object({
     .min(1, "Anne meslek seçimi zorunludur"),
   
   anneIsAdresi: z.string()
-    .max(500, "Anne iş adresi en fazla 500 karakter olabilir")
-    .optional(),
+    .min(15, "Anne iş adresi en az 15 karakter olmalıdır")
+    .max(500, "Anne iş adresi en fazla 500 karakter olabilir"),
   
   anneCepTel: z.string()
     .min(10, "Telefon numarası en az 10 haneli olmalıdır")
