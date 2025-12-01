@@ -84,6 +84,7 @@ const okullar = [
   'RİZE - GÜNEYSU - Adacami İlkokulu',
   'RİZE - GÜNEYSU - ÖZEL BİLGE İLKOKULU',
   'RİZE - GÜNEYSU - ÖZEL GÜNEYSU OKULLARI İLKOKULU',
+  'RİZE - GÜNEYSU - ÖZEL GÜNEYSU OKULLARI ORTAOKULU',
   // HEMŞİN
   'RİZE - HEMŞİN - MERKEZ ORTAOKULU',
   'RİZE - HEMŞİN - Hemşin Çok Programlı Anadolu Lisesi',
@@ -159,6 +160,18 @@ const okullar = [
   'RİZE - MERKEZ - PETROL OFİSİ İLKOKULU',
   'RİZE - MERKEZ - MEHMETÇİK İLKOKULU',
   'RİZE - MERKEZ - VAKIFBANK İLKOKULU',
+  'RİZE - MERKEZ - ÖZEL RİZE ANADOLU İLKOKULU',
+  'RİZE - MERKEZ - ÖZEL RİZE ANADOLU ORTAOKULU',
+  'RİZE - MERKEZ - ÖZEL RİZE BAHÇEŞEHİR KOLEJİ ANADOLU LİSESİ',
+  'RİZE - MERKEZ - ÖZEL RİZE BAHÇEŞEHİR KOLEJİ FEN LİSESİ',
+  'RİZE - MERKEZ - ÖZEL RİZE BAHÇEŞEHİR KOLEJİ İLKOKULU',
+  'RİZE - MERKEZ - ÖZEL RİZE BAHÇEŞEHİR KOLEJİ ORTAOKULU',
+  'RİZE - MERKEZ - ÖZEL RİZE ÇÖZÜM ANADOLU LİSESİ',
+  'RİZE - MERKEZ - ÖZEL RİZE ÇÖZÜM İLKOKULU',
+  'RİZE - MERKEZ - ÖZEL RİZE ÇÖZÜM ORTAOKULU',
+  'RİZE - MERKEZ - ÖZEL RİZE POYRAZ ANADOLU LİSESİ',
+  'RİZE - MERKEZ - ÖZEL RİZE POYRAZ FEN LİSESİ',
+  'RİZE - MERKEZ - ÖZEL RİZE POYRAZ ORTAOKULU',
   // PAZAR
   'RİZE - PAZAR - FUAT ERGENÇ ORTAOKULU',
   'RİZE - PAZAR - Pazar Anadolu İmam Hatip Lisesi',
@@ -178,6 +191,10 @@ const okullar = [
   'RİZE - PAZAR - Ahmet Mesut Yılmaz İlkokulu',
   'RİZE - PAZAR - AKTEPE İLKOKULU',
   'RİZE - PAZAR - ÖZEL RİZE PAZAR MEKTEBİM İLKOKULU',
+  'RİZE - PAZAR - ÖZEL ÇÖZÜM FEN LİSESİ',
+  'RİZE - PAZAR - ÖZEL ÇÖZÜM İLKOKULU',
+  'RİZE - PAZAR - ÖZEL ÇÖZÜM ORTAOKULU',
+  'RİZE - PAZAR - ÖZEL PAZAR AÇI ANADOLU LİSESİ',
 ]
 
 const siniflar = [
@@ -336,6 +353,7 @@ export default function HomePage() {
   const selectedOkul = watch('okul')
   const selectedBabaMeslek = watch('babaMeslek')
   const selectedAnneMeslek = watch('anneMeslek')
+  const selectedSinavGunu = watch('sinavGunu')
 
   // Filtrelenmiş okul listesi
   const filteredOkullar = useMemo(() => {
@@ -522,6 +540,7 @@ export default function HomePage() {
                           'okul': 'Okul',
                           'ogrenciSinifi': 'Sınıf',
                           'ogrenciSube': 'Sınıf Şubesi',
+                          'sinavGunu': 'Sınav Günü',
                           'babaAdSoyad': 'Baba Ad Soyad',
                           'babaMeslek': 'Baba Meslek',
                           'babaIsAdresi': 'Baba İş Adresi',
@@ -638,6 +657,24 @@ export default function HomePage() {
                   </select>
                   {errors.ogrenciSube && (
                     <p className="mt-1 text-sm text-red-600">{errors.ogrenciSube.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sınava hangi gün katılmak istersiniz? <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    {...register('sinavGunu')}
+                    value={selectedSinavGunu || ''}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                  >
+                    <option value="">Seçiniz</option>
+                    <option value="Cumartesi">Cumartesi</option>
+                    <option value="Pazar">Pazar</option>
+                  </select>
+                  {errors.sinavGunu && (
+                    <p className="mt-1 text-sm text-red-600">{errors.sinavGunu.message}</p>
                   )}
                 </div>
 

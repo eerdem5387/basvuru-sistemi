@@ -42,6 +42,11 @@ export const basvuruSchema = z.object({
 
   ogrenciSube: z.string()
     .min(1, "Şube seçimi zorunludur"),
+
+  sinavGunu: z.enum(["Cumartesi", "Pazar"], {
+    required_error: "Sınav günü seçimi zorunludur",
+    invalid_type_error: "Geçerli bir sınav günü seçiniz",
+  }),
   
   babaAdSoyad: z.string()
     .min(3, "Baba adı soyadı en az 3 karakter olmalıdır")
