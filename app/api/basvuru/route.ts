@@ -89,7 +89,7 @@ export async function POST(request: Request) {
       .catch((error) => {
         // Webhook hatası loglanır ama kullanıcıya gösterilmez
         console.error('[Başvuru] ❌ Webhook asenkron gönderim hatası:', error)
-      })
+    })
     
     return NextResponse.json(
       { 
