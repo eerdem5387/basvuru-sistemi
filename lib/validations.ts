@@ -44,7 +44,7 @@ export const basvuruSchema = z.object({
     .min(1, "Şube seçimi zorunludur"),
  
   // Zod sürümü için basit enum kullanımı
-  sinavGunu: z.enum(["Cumartesi", "Pazar"]),
+  sinavGunu: z.enum(["10 Ocak - Cumartesi", "11 Ocak - Pazar"]),
   
   babaAdSoyad: z.string()
     .min(3, "Baba adı soyadı en az 3 karakter olmalıdır")

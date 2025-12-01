@@ -579,6 +579,32 @@ export default function HomePage() {
         {/* Form */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 sm:p-8 space-y-8">
+            {/* Sınav Günü Seçimi */}
+            <section className="bg-indigo-50 p-6 rounded-xl border-2 border-indigo-100">
+              <h2 className="text-2xl font-bold text-indigo-900 mb-4 pb-2 border-b-2 border-indigo-200">
+                Sınav Günü Tercihi
+              </h2>
+              <div>
+                <label className="block text-lg font-medium text-indigo-900 mb-3">
+                  Sınava hangi gün katılmak istersiniz? <span className="text-red-500">*</span>
+                </label>
+                <select
+                  {...register('sinavGunu')}
+                  value={selectedSinavGunu || ''}
+                  className="w-full px-4 py-4 text-lg border-2 border-indigo-200 rounded-lg focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-200 bg-white text-indigo-900 font-medium"
+                >
+                  <option value="">Lütfen bir gün seçiniz...</option>
+                  <option value="10 Ocak - Cumartesi">10 Ocak - Cumartesi</option>
+                  <option value="11 Ocak - Pazar">11 Ocak - Pazar</option>
+                </select>
+                {errors.sinavGunu && (
+                  <p className="mt-2 text-base text-red-600 font-medium bg-red-50 p-2 rounded-lg border border-red-100">
+                    ⚠️ {errors.sinavGunu.message}
+                  </p>
+                )}
+              </div>
+            </section>
+
             {/* Öğrenci Bilgileri */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-indigo-500">
@@ -657,24 +683,6 @@ export default function HomePage() {
                   </select>
                   {errors.ogrenciSube && (
                     <p className="mt-1 text-sm text-red-600">{errors.ogrenciSube.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sınava hangi gün katılmak istersiniz? <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    {...register('sinavGunu')}
-                    value={selectedSinavGunu || ''}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                  >
-                    <option value="">Seçiniz</option>
-                    <option value="Cumartesi">Cumartesi</option>
-                    <option value="Pazar">Pazar</option>
-                  </select>
-                  {errors.sinavGunu && (
-                    <p className="mt-1 text-sm text-red-600">{errors.sinavGunu.message}</p>
                   )}
                 </div>
 
