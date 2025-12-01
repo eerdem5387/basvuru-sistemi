@@ -42,10 +42,12 @@ export const basvuruSchema = z.object({
 
   ogrenciSube: z.string()
     .min(1, "Şube seçimi zorunludur"),
-
+  
+  // Zod sürümü enum için required_error desteği vermediği için basit kullanım
   sinavGunu: z.enum(["Cumartesi", "Pazar"], {
-    required_error: "Sınav günü seçimi zorunludur",
-    invalid_type_error: "Geçerli bir sınav günü seçiniz",
+    errorMap: () => ({
+      message: "Sınav günü seçimi zorunludur",
+    }),
   }),
   
   babaAdSoyad: z.string()
