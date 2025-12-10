@@ -162,6 +162,7 @@ const okullar = [
   'RİZE - MERKEZ - VAKIFBANK İLKOKULU',
   'RİZE - MERKEZ - Kurtuluş İlkokulu',
   'RİZE - MERKEZ - Türkiye Odalar ve Borsalar Birliği İlkokulu',
+  'RİZE - MERKEZ - Doğuşçay İlkokulu',
   'RİZE - MERKEZ - ÖZEL RİZE ANADOLU İLKOKULU',
   'RİZE - MERKEZ - ÖZEL RİZE ANADOLU ORTAOKULU',
   'RİZE - MERKEZ - ÖZEL RİZE BAHÇEŞEHİR KOLEJİ ANADOLU LİSESİ',
