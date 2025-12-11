@@ -402,7 +402,6 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState<{ message: string; details?: Array<{ path: string[]; message: string }> } | null>(null)
-  const [okulSearch, setOkulSearch] = useState('')
   const [babaMeslekSearch, setBabaMeslekSearch] = useState('')
   const [anneMeslekSearch, setAnneMeslekSearch] = useState('')
   const [kvkkOnay, setKvkkOnay] = useState(false)
@@ -422,14 +421,6 @@ export default function HomePage() {
   const selectedBabaMeslek = watch('babaMeslek')
   const selectedAnneMeslek = watch('anneMeslek')
   const selectedSinavGunu = watch('sinavGunu')
-
-  // Filtrelenmiş okul listesi
-  const filteredOkullar = useMemo(() => {
-    if (!okulSearch) return okullar
-    return okullar.filter(okul =>
-      okul.toLowerCase().includes(okulSearch.toLowerCase())
-    )
-  }, [okulSearch])
 
   // Filtrelenmiş baba meslek listesi
   const filteredBabaMeslekler = useMemo(() => {
@@ -472,7 +463,6 @@ export default function HomePage() {
 
       setSubmitSuccess(true)
       reset()
-      setOkulSearch('')
       setBabaMeslekSearch('')
       setAnneMeslekSearch('')
 
@@ -759,36 +749,18 @@ export default function HomePage() {
                     Okul <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Okul adı yazarak arayın..."
-                      value={okulSearch}
-                      onChange={(e) => setOkulSearch(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 mb-2"
-                    />
                     <select
                       {...register('okul')}
-                      value={selectedOkul || ''}
-                      onChange={(e) => {
-                        setValue('okul', e.target.value)
-                        setOkulSearch('')
-                      }}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                      size={okulSearch ? Math.min(filteredOkullar.length + 1, 8) : 1}
                     >
                       <option value="">Seçiniz</option>
-                      {filteredOkullar.map((okul) => (
+                      {okullar.map((okul) => (
                         <option key={okul} value={okul}>
                           {okul}
                         </option>
                       ))}
                     </select>
                   </div>
-                  {selectedOkul && (
-                    <p className="mt-2 text-sm text-green-600 font-medium">
-                      ✓ Seçilen: {selectedOkul}
-                    </p>
-                  )}
                   {errors.okul && (
                     <p className="mt-1 text-sm text-red-600">{errors.okul.message}</p>
                   )}
