@@ -39,7 +39,7 @@ export const basvuruSchema = z.object({
   
   ogrenciSinifi: z.string()
     .min(1, "Sınıf seçimi zorunludur"),
-
+  
   ogrenciSube: z.string()
     .min(1, "Şube seçimi zorunludur"),
  
