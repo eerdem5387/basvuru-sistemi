@@ -303,6 +303,7 @@ const meslekler = [
   'Ekspresyonist',
   'Elektrik Elektronik Mühendisi',
   'Elektrik Teknisyeni',
+  'Emekli',
   'Emlakçı',
   'Endüstri Mühendisi',
   'Endüstriyel Tasarımcı',
