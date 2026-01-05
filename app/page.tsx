@@ -11,6 +11,7 @@ const okullar = [
   // ARDEŞEN
   'RİZE - ARDEŞEN - Alparslan Ortaokulu',
   'RİZE - ARDEŞEN - Ardeşen Anadolu İmam Hatip Lisesi',
+  'RİZE - ARDEŞEN - Ardeşen Ertuğrul Gazi Ortaokulu',
   'RİZE - ARDEŞEN - Ardeşen Fırtına Vadisi İrfan Tufan Karaoğlu Mesleki ve Teknik Anadolu Lisesi',
   'RİZE - ARDEŞEN - Ardeşen İmam Hatip Ortaokulu',
   'RİZE - ARDEŞEN - Ardeşen Lokman Hekim Mesleki ve Teknik Anadolu Lisesi',
