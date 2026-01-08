@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { basvuruSchema, type BasvuruFormData } from '@/lib/validations'
@@ -409,6 +409,9 @@ export default function HomePage() {
   const [babaMeslekSearch, setBabaMeslekSearch] = useState('')
   const [anneMeslekSearch, setAnneMeslekSearch] = useState('')
   const [kvkkOnay, setKvkkOnay] = useState(false)
+  const [isQuotaFull, setIsQuotaFull] = useState(false)
+  const [isCheckingQuota, setIsCheckingQuota] = useState(false)
+  const [quotaInfo, setQuotaInfo] = useState<{ current: number; max: number; remaining: number } | null>(null)
 
   const {
     register,
@@ -425,6 +428,7 @@ export default function HomePage() {
   const selectedBabaMeslek = watch('babaMeslek')
   const selectedAnneMeslek = watch('anneMeslek')
   const selectedSinavGunu = watch('sinavGunu')
+  const selectedSinif = watch('ogrenciSinifi')
 
   // Filtrelenmiş baba meslek listesi
   const filteredBabaMeslekler = useMemo(() => {
@@ -441,6 +445,43 @@ export default function HomePage() {
       meslek.toLowerCase().includes(anneMeslekSearch.toLowerCase())
     )
   }, [anneMeslekSearch])
+
+  // 4. sınıf seçildiğinde kota kontrolü yap
+  useEffect(() => {
+    const checkQuota = async () => {
+      if (selectedSinif === '4. Sınıf') {
+        setIsCheckingQuota(true)
+        try {
+          const response = await fetch('/api/basvuru/kota')
+          const data = await response.json()
+          
+          setQuotaInfo({
+            current: data.current,
+            max: data.max,
+            remaining: data.remaining
+          })
+          
+          if (data.isFull) {
+            setIsQuotaFull(true)
+          } else {
+            setIsQuotaFull(false)
+          }
+        } catch (error) {
+          console.error('Kota kontrolü hatası:', error)
+          // Hata durumunda güvenli tarafta kal, kota dolmuş varsay
+          setIsQuotaFull(true)
+          setQuotaInfo(null)
+        } finally {
+          setIsCheckingQuota(false)
+        }
+      } else {
+        setIsQuotaFull(false)
+        setQuotaInfo(null)
+      }
+    }
+
+    checkQuota()
+  }, [selectedSinif])
 
   const onSubmit = async (data: BasvuruFormData) => {
     setIsSubmitting(true)
@@ -715,6 +756,7 @@ export default function HomePage() {
                   <select
                     {...register('ogrenciSinifi')}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                    disabled={isCheckingQuota}
                   >
                     <option value="">Seçiniz</option>
                     {siniflar.map((sinif) => (
@@ -725,6 +767,40 @@ export default function HomePage() {
                   </select>
                   {errors.ogrenciSinifi && (
                     <p className="mt-1 text-sm text-red-600">{errors.ogrenciSinifi.message}</p>
+                  )}
+                  {isCheckingQuota && selectedSinif === '4. Sınıf' && (
+                    <p className="mt-2 text-sm text-blue-600">Kota kontrol ediliyor...</p>
+                  )}
+                  {!isCheckingQuota && quotaInfo && selectedSinif === '4. Sınıf' && !isQuotaFull && (
+                    <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-blue-900">
+                            4. Sınıf Başvuru Durumu
+                          </p>
+                          <p className="text-xs text-blue-700 mt-1">
+                            Kalan kontenjan: <span className="font-semibold">{quotaInfo.remaining}</span> / {quotaInfo.max}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-blue-600">{quotaInfo.remaining}</div>
+                          <div className="text-xs text-blue-600">Kalan</div>
+                        </div>
+                      </div>
+                      <div className="mt-3 w-full bg-blue-200 rounded-full h-2">
+                        <div 
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${(quotaInfo.remaining / quotaInfo.max) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                  {isQuotaFull && selectedSinif === '4. Sınıf' && (
+                    <div className="mt-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm font-medium text-red-800">
+                        4. sınıflar için maksimum başvuru sayısına ulaşıldı. İlginiz için teşekkürler.
+                      </p>
+                    </div>
                   )}
                 </div>
 
@@ -1036,7 +1112,7 @@ export default function HomePage() {
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={isSubmitting || !kvkkOnay}
+                disabled={isSubmitting || !kvkkOnay || isQuotaFull}
                 className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg shadow-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (

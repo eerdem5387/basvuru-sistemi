@@ -61,6 +61,23 @@ export async function POST(request: Request) {
       )
     }
     
+    // 4. sınıf için kota kontrolü
+    if (validatedData.ogrenciSinifi === "4. Sınıf") {
+      const MAX_4_SINIF_QUOTA = 560
+      const count = await prisma.basvuru.count({
+        where: {
+          ogrenciSinifi: "4. Sınıf"
+        }
+      })
+      
+      if (count >= MAX_4_SINIF_QUOTA) {
+        return NextResponse.json(
+          { error: "4. sınıflar için maksimum başvuru sayısına ulaşıldı. İlginiz için teşekkürler." },
+          { status: 400 }
+        )
+      }
+    }
+    
     // Başvuruyu kaydet
     const basvuru = await prisma.basvuru.create({
       data: {
