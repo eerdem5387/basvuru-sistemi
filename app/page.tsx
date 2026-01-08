@@ -779,18 +779,18 @@ export default function HomePage() {
                             4. Sınıf Başvuru Durumu
                           </p>
                           <p className="text-xs text-blue-700 mt-1">
-                            Kalan kontenjan: <span className="font-semibold">{quotaInfo.remaining}</span> / {quotaInfo.max}
+                            Doluluk: <span className="font-semibold">{quotaInfo.current}</span> / {quotaInfo.max}
                           </p>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-600">{quotaInfo.remaining}</div>
-                          <div className="text-xs text-blue-600">Kalan</div>
+                          <div className="text-2xl font-bold text-blue-600">{quotaInfo.current}</div>
+                          <div className="text-xs text-blue-600">Dolu</div>
                         </div>
                       </div>
                       <div className="mt-3 w-full bg-blue-200 rounded-full h-2">
                         <div 
                           className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${(quotaInfo.remaining / quotaInfo.max) * 100}%` }}
+                          style={{ width: `${(quotaInfo.current / quotaInfo.max) * 100}%` }}
                         ></div>
                       </div>
                     </div>
