@@ -264,6 +264,8 @@ const okullar = [
   'RİZE - PAZAR - TOPLU KONUT İDARESİ BAŞKANLIĞI İLKOKULU',
   'RİZE - PAZAR - VALİ ERDAL ATA İLKOKULU',
   'RİZE - PAZAR - Veysel Vardal İlkokulu',
+  // TRABZON
+  'TRABZON - OF - Şehit Ali Bulut İlköğretim Okulu',
 ]
 
 const siniflar = [
