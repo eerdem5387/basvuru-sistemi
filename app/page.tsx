@@ -697,7 +697,6 @@ export default function HomePage() {
                   className="w-full px-4 py-4 text-lg border-2 border-indigo-200 rounded-lg focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-200 bg-white text-indigo-900 font-medium"
                 >
                   <option value="">Lütfen bir gün seçiniz...</option>
-                  <option value="10 Ocak - Cumartesi">10 Ocak - Cumartesi</option>
                   <option value="11 Ocak - Pazar">11 Ocak - Pazar</option>
                 </select>
                 {errors.sinavGunu && (
