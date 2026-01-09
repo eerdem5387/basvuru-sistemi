@@ -679,10 +679,32 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Form */}
+        {/* Başvuru Süresi Dolmuş Mesajı */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="p-8 sm:p-12 text-center">
+            <div className="space-y-6">
+              <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-indigo-100 mb-6">
+                <svg className="h-12 w-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+                Başvuru Süremiz Dolmuştur
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-700 leading-relaxed max-w-2xl mx-auto">
+                Katılımınız ve ilginiz için teşekkür ederiz. Herkese başarılar dileriz.
+              </p>
+              <p className="text-xl sm:text-2xl font-semibold text-indigo-700 mt-8">
+                Levent Okulları
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* FORM İÇERİĞİ - İLERİDE KULLANILMAK ÜZERE YORUM SATIRLARINA ALINDI */}
+        {/*
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 sm:p-8 space-y-8">
-            {/* Sınav Günü Seçimi */}
             <section className="bg-indigo-50 p-6 rounded-xl border-2 border-indigo-100">
               <h2 className="text-2xl font-bold text-indigo-900 mb-4 pb-2 border-b-2 border-indigo-200">
                 Sınav Günü Tercihi
@@ -707,7 +729,6 @@ export default function HomePage() {
               </div>
             </section>
 
-            {/* Öğrenci Bilgileri */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-indigo-500">
                 Öğrenci Bilgileri
@@ -841,7 +862,6 @@ export default function HomePage() {
               </div>
             </section>
 
-            {/* Baba Bilgileri */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-indigo-500">
                 Baba Bilgileri
@@ -945,7 +965,6 @@ export default function HomePage() {
               </div>
             </section>
 
-            {/* Anne Bilgileri */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-indigo-500">
                 Anne Bilgileri
@@ -1049,7 +1068,6 @@ export default function HomePage() {
               </div>
             </section>
 
-            {/* İletişim Bilgileri */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-indigo-500">
                 İletişim Bilgileri
@@ -1072,7 +1090,6 @@ export default function HomePage() {
               </div>
             </section>
 
-            {/* KVKK Onay */}
             <div className="pt-6 pb-4">
               <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
                 <input
@@ -1101,7 +1118,6 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* Submit Button */}
             <div className="pt-2">
               <button
                 type="submit"
@@ -1127,6 +1143,7 @@ export default function HomePage() {
             </p>
           </form>
         </div>
+        */}
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600 text-sm">
