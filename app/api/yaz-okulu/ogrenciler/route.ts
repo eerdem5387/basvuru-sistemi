@@ -11,7 +11,7 @@ export async function GET() {
     const serviceSecret =
       process.env.SERVICE_API_SECRET?.trim() || FALLBACK_SERVICE_SECRET
 
-    const url = `${baseUrl.replace(/\/$/, '')}/api/service/yaz-okulu-ogrenciler`
+    const url = `${baseUrl.replace(/\/$/, '')}/api/students/yaz-okulu`
 
     const response = await fetch(url, {
       headers: {
