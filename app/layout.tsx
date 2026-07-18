@@ -8,11 +8,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Bursluluk Sınavı Başvuru Sistemi - Levent Koleji",
-  description: "2025 Yılı Bursluluk Sınavı İçin Başvuru Formu - Levent Koleji",
+  title: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
+  description: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
   openGraph: {
-    title: "Bursluluk Sınavı Başvuru Sistemi - Levent Koleji",
-    description: "2025 Yılı Bursluluk Sınavı İçin Başvuru Formu - Levent Koleji",
+    title: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
+    description: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
     url: 'https://basvuru.leventokullari.com',
     siteName: 'Levent Koleji Başvuru Sistemi',
     images: [
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: "Bursluluk Sınavı Başvuru Sistemi - Levent Koleji",
-    description: "2025 Yılı Bursluluk Sınavı İçin Başvuru Formu - Levent Koleji",
+    title: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
+    description: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
     images: ['/logo.png'],
   },
 };
