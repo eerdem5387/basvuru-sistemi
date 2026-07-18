@@ -36,10 +36,12 @@ function checkRateLimit(ip: string): boolean {
 }
 
 async function fetchStudentFromOkul(studentId: string) {
-  const baseUrl = process.env.OKUL_YONETIM_API_URL
-  const serviceSecret = process.env.SERVICE_API_SECRET
+  const baseUrl =
+    process.env.OKUL_YONETIM_API_URL?.trim() ||
+    'https://yonetim.leventokullari.com'
+  const serviceSecret = process.env.SERVICE_API_SECRET?.trim()
 
-  if (!baseUrl || !serviceSecret) {
+  if (!serviceSecret) {
     return null
   }
 

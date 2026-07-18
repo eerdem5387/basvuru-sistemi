@@ -1,16 +1,12 @@
 import { NextResponse } from 'next/server'
 
+const DEFAULT_OKUL_API_URL = 'https://yonetim.leventokullari.com'
+
 export async function GET() {
   try {
-    const baseUrl = process.env.OKUL_YONETIM_API_URL
-    const serviceSecret = process.env.SERVICE_API_SECRET
-
-    if (!baseUrl) {
-      return NextResponse.json(
-        { error: 'OKUL_YONETIM_API_URL tanımlı değil' },
-        { status: 500 }
-      )
-    }
+    const baseUrl =
+      process.env.OKUL_YONETIM_API_URL?.trim() || DEFAULT_OKUL_API_URL
+    const serviceSecret = process.env.SERVICE_API_SECRET?.trim()
 
     if (!serviceSecret) {
       return NextResponse.json(
@@ -39,7 +35,6 @@ export async function GET() {
 
     const data = await response.json()
 
-    // Dropdown için yalnızca güvenli alanları ilet
     const ogrenciler = (data.ogrenciler || []).map(
       (o: { id: string; firstName: string; lastName: string; grade?: string | null }) => ({
         id: o.id,
