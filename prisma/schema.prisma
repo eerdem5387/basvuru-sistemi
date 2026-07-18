@@ -41,13 +41,18 @@ model Admin {
 }
 
 model YazOkuluBasvuru {
-  id             String   @id @default(cuid())
-  studentId      String   @unique
-  ogrenciAdSoyad String
-  ogrenciSinifi  String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id            String   @id @default(cuid())
+  ogrenciAd     String
+  ogrenciSoyad  String
+  okul          String
+  ogrenciSinifi String
+  veliAd        String
+  veliSoyad     String
+  veliTelefon   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([createdAt])
+  @@index([veliTelefon])
   @@map("yaz_okulu_basvurular")
 }

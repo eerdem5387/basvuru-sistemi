@@ -7,7 +7,15 @@ import {
 } from '@/lib/webhook'
 
 const yazOkuluBasvuruSchema = z.object({
-  studentId: z.string().min(1, 'Öğrenci seçimi zorunludur'),
+  ogrenciAd: z.string().trim().min(2, 'Öğrenci adı zorunludur'),
+  ogrenciSoyad: z.string().trim().min(2, 'Öğrenci soyadı zorunludur'),
+  okul: z.string().trim().min(2, 'Okul zorunludur'),
+  ogrenciSinifi: z.string().trim().min(1, 'Sınıf zorunludur'),
+  veliAd: z.string().trim().min(2, 'Veli adı zorunludur'),
+  veliSoyad: z.string().trim().min(2, 'Veli soyadı zorunludur'),
+  veliTelefon: z
+    .string()
+    .regex(/^5\d{9}$/, 'Telefon 5 ile başlayan 10 haneli olmalıdır'),
   kvkkOnay: z
     .boolean()
     .refine((v) => v === true, { message: 'KVKK onayı zorunludur' }),
@@ -35,38 +43,6 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
-async function fetchStudentFromOkul(studentId: string) {
-  const baseUrl =
-    process.env.OKUL_YONETIM_API_URL?.trim() ||
-    'https://yonetim.leventokullari.com'
-  const serviceSecret =
-    process.env.SERVICE_API_SECRET?.trim() ||
-    '3QrT/eFINjbCQUZgVqUJa9k7XPHNgU9Cjg22oJwIoFQ='
-
-  const url = `${baseUrl.replace(/\/$/, '')}/api/students/yaz-okulu?id=${encodeURIComponent(studentId)}`
-
-  const response = await fetch(url, {
-    headers: {
-      'X-Service-Secret': serviceSecret,
-    },
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    return null
-  }
-
-  const data = await response.json()
-  const ogrenciler: Array<{
-    id: string
-    firstName: string
-    lastName: string
-    grade?: string | null
-  }> = data.ogrenciler || []
-
-  return ogrenciler.find((o) => o.id === studentId) || null
-}
-
 export async function POST(request: Request) {
   try {
     const ip =
@@ -84,36 +60,18 @@ export async function POST(request: Request) {
     const body = await request.json()
     const validated = yazOkuluBasvuruSchema.parse(body)
 
-    const existing = await prisma.yazOkuluBasvuru.findUnique({
-      where: { studentId: validated.studentId },
-    })
-
-    if (existing) {
-      return NextResponse.json(
-        { error: 'Bu öğrenci için daha önce yaz okulu başvurusu yapılmış.' },
-        { status: 409 }
-      )
-    }
-
-    const student = await fetchStudentFromOkul(validated.studentId)
-    if (!student) {
-      return NextResponse.json(
-        { error: 'Seçilen öğrenci bulunamadı. Lütfen sayfayı yenileyip tekrar deneyiniz.' },
-        { status: 400 }
-      )
-    }
-
-    const ogrenciAdSoyad = `${student.firstName} ${student.lastName}`.trim()
-
     const basvuru = await prisma.yazOkuluBasvuru.create({
       data: {
-        studentId: student.id,
-        ogrenciAdSoyad,
-        ogrenciSinifi: student.grade || null,
+        ogrenciAd: validated.ogrenciAd,
+        ogrenciSoyad: validated.ogrenciSoyad,
+        okul: validated.okul,
+        ogrenciSinifi: validated.ogrenciSinifi,
+        veliAd: validated.veliAd,
+        veliSoyad: validated.veliSoyad,
+        veliTelefon: validated.veliTelefon,
       },
     })
 
-    // Webhook async - başvuru başarısını engellemez
     sendYazOkuluWebhook(formatYazOkuluBasvuruForWebhook(basvuru)).catch((err) => {
       console.error('[Yaz Okulu] Webhook hatası:', err)
     })
@@ -130,20 +88,13 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
-          error: 'Geçersiz başvuru verisi',
+          error: error.issues[0]?.message || 'Geçersiz başvuru verisi',
           details: error.issues.map((e) => ({
             path: e.path.map(String),
             message: e.message,
           })),
         },
         { status: 400 }
-      )
-    }
-
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
-      return NextResponse.json(
-        { error: 'Bu öğrenci için daha önce yaz okulu başvurusu yapılmış.' },
-        { status: 409 }
       )
     }
 

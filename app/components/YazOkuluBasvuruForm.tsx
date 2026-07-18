@@ -1,90 +1,59 @@
 'use client'
 
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
-interface Ogrenci {
-  id: string
-  firstName: string
-  lastName: string
-  grade: string | null
+const siniflar = [
+  'Anaokulu',
+  '1. Sınıf',
+  '2. Sınıf',
+  '3. Sınıf',
+  '4. Sınıf',
+  '5. Sınıf',
+  '6. Sınıf',
+  '7. Sınıf',
+  '8. Sınıf',
+  '9. Sınıf',
+  '10. Sınıf',
+  '11. Sınıf',
+  '12. Sınıf',
+]
+
+type FormState = {
+  ogrenciAd: string
+  ogrenciSoyad: string
+  okul: string
+  ogrenciSinifi: string
+  veliAd: string
+  veliSoyad: string
+  veliTelefon: string
+}
+
+const emptyForm: FormState = {
+  ogrenciAd: '',
+  ogrenciSoyad: '',
+  okul: '',
+  ogrenciSinifi: '',
+  veliAd: '',
+  veliSoyad: '',
+  veliTelefon: '',
 }
 
 export default function YazOkuluBasvuruForm() {
-  const [ogrenciler, setOgrenciler] = useState<Ogrenci[]>([])
-  const [loadingOgrenciler, setLoadingOgrenciler] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
-  const [selectedStudent, setSelectedStudent] = useState<Ogrenci | null>(null)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [form, setForm] = useState<FormState>(emptyForm)
   const [kvkkOnay, setKvkkOnay] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const dropdownRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const fetchOgrenciler = async () => {
-      setLoadingOgrenciler(true)
-      setLoadError(null)
-      try {
-        const response = await fetch('/api/yaz-okulu/ogrenciler')
-        const data = await response.json()
-        if (!response.ok) {
-          throw new Error(data.error || 'Öğrenci listesi yüklenemedi')
-        }
-        setOgrenciler(data.ogrenciler || [])
-      } catch (error) {
-        setLoadError(error instanceof Error ? error.message : 'Öğrenci listesi yüklenemedi')
-      } finally {
-        setLoadingOgrenciler(false)
-      }
-    }
-
-    fetchOgrenciler()
-  }, [])
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  const filteredOgrenciler = useMemo(() => {
-    const query = search.trim().toLocaleLowerCase('tr-TR')
-    if (!query) return ogrenciler
-
-    return ogrenciler.filter((ogrenci) => {
-      const fullName = `${ogrenci.firstName} ${ogrenci.lastName}`.toLocaleLowerCase('tr-TR')
-      return fullName.includes(query)
-    })
-  }, [ogrenciler, search])
-
-  const handleSelect = (ogrenci: Ogrenci) => {
-    setSelectedStudent(ogrenci)
-    setSearch(`${ogrenci.firstName} ${ogrenci.lastName}`)
-    setIsDropdownOpen(false)
-  }
-
-  const handleSearchChange = (value: string) => {
-    setSearch(value)
-    setSelectedStudent(null)
-    setIsDropdownOpen(true)
+  const updateField = (field: keyof FormState, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }))
   }
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitError(null)
-
-    if (!selectedStudent) {
-      setSubmitError('Lütfen bir öğrenci seçiniz.')
-      return
-    }
 
     if (!kvkkOnay) {
       setSubmitError('Başvuru için KVKK onayını vermeniz gerekmektedir.')
@@ -96,14 +65,10 @@ export default function YazOkuluBasvuruForm() {
       const response = await fetch('/api/yaz-okulu-basvuru', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          studentId: selectedStudent.id,
-          kvkkOnay: true,
-        }),
+        body: JSON.stringify({ ...form, kvkkOnay: true }),
       })
 
       const result = await response.json()
-
       if (!response.ok) {
         throw new Error(result.error || 'Başvuru gönderilemedi')
       }
@@ -116,6 +81,9 @@ export default function YazOkuluBasvuruForm() {
     }
   }
 
+  const inputClass =
+    'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200'
+
   if (submitSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -124,24 +92,14 @@ export default function YazOkuluBasvuruForm() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               <div className="flex items-center gap-3">
                 <div className="relative h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
-                  <img
-                    src="/logo.png"
-                    alt="Levent Koleji Logo"
-                    className="h-full w-full object-contain"
-                  />
+                  <img src="/logo.png" alt="Levent Koleji Logo" className="h-full w-full object-contain" />
                 </div>
-                <div className="text-left">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">
-                    Levent Koleji
-                  </h2>
-                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">Levent Koleji</h2>
               </div>
               <div className="hidden sm:block h-16 w-px bg-gray-300" />
-              <div className="text-center sm:text-left">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                  2026-2027 Yaz Okulu Başvuru Formu
-                </h1>
-              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                2026-2027 Yaz Okulu Başvuru Formu
+              </h1>
             </div>
           </div>
         </header>
@@ -158,15 +116,11 @@ export default function YazOkuluBasvuruForm() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                Başvurunuz Alındı
-              </h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Başvurunuz Alındı</h2>
               <p className="text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
                 Yaz okulu başvurunuz başarıyla kaydedilmiştir. Teşekkür ederiz.
               </p>
-              <p className="text-xl font-semibold text-indigo-700 mt-8">
-                Levent Okulları
-              </p>
+              <p className="text-xl font-semibold text-indigo-700 mt-8">Levent Okulları</p>
             </div>
           </motion.div>
         </main>
@@ -181,17 +135,9 @@ export default function YazOkuluBasvuruForm() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
             <div className="flex items-center gap-3">
               <div className="relative h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
-                <img
-                  src="/logo.png"
-                  alt="Levent Koleji Logo"
-                  className="h-full w-full object-contain"
-                />
+                <img src="/logo.png" alt="Levent Koleji Logo" className="h-full w-full object-contain" />
               </div>
-              <div className="text-left">
-                <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">
-                  Levent Koleji
-                </h2>
-              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">Levent Koleji</h2>
             </div>
             <div className="hidden sm:block h-16 w-px bg-gray-300" />
             <div className="text-center sm:text-left">
@@ -199,7 +145,7 @@ export default function YazOkuluBasvuruForm() {
                 2026-2027 Yaz Okulu Başvuru Formu
               </h1>
               <p className="text-gray-600 text-sm sm:text-base">
-                Öğrencinizi seçerek yaz okulu başvurusunu tamamlayabilirsiniz
+                Öğrenci ve veli bilgilerini doldurarak başvurunuzu tamamlayabilirsiniz
               </p>
             </div>
           </div>
@@ -217,65 +163,117 @@ export default function YazOkuluBasvuruForm() {
           <form onSubmit={onSubmit} className="p-6 sm:p-8 space-y-8">
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-indigo-500">
-                Öğrenci Seçimi
+                Öğrenci Bilgileri
               </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Öğrenci Adı <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.ogrenciAd}
+                    onChange={(e) => updateField('ogrenciAd', e.target.value.toLocaleUpperCase('tr-TR'))}
+                    className={inputClass}
+                    placeholder="Öğrenci adı"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Öğrenci Soyadı <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.ogrenciSoyad}
+                    onChange={(e) => updateField('ogrenciSoyad', e.target.value.toLocaleUpperCase('tr-TR'))}
+                    className={inputClass}
+                    placeholder="Öğrenci soyadı"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Okul <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.okul}
+                    onChange={(e) => updateField('okul', e.target.value)}
+                    className={inputClass}
+                    placeholder="Okul adı"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sınıf <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    required
+                    value={form.ogrenciSinifi}
+                    onChange={(e) => updateField('ogrenciSinifi', e.target.value)}
+                    className={inputClass}
+                  >
+                    <option value="">Seçiniz</option>
+                    {siniflar.map((sinif) => (
+                      <option key={sinif} value={sinif}>
+                        {sinif}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </section>
 
-              <div ref={dropdownRef} className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Öğrenci <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  onFocus={() => setIsDropdownOpen(true)}
-                  disabled={loadingOgrenciler || !!loadError}
-                  placeholder={
-                    loadingOgrenciler
-                      ? 'Öğrenciler yükleniyor...'
-                      : 'Ad soyad yazarak arayın...'
-                  }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 disabled:bg-gray-100"
-                  autoComplete="off"
-                />
-
-                {isDropdownOpen && !loadingOgrenciler && !loadError && (
-                  <div className="absolute z-20 mt-1 w-full max-h-64 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
-                    {filteredOgrenciler.length === 0 ? (
-                      <div className="px-4 py-3 text-sm text-gray-500">
-                        Eşleşen öğrenci bulunamadı
-                      </div>
-                    ) : (
-                      filteredOgrenciler.map((ogrenci) => {
-                        const fullName = `${ogrenci.firstName} ${ogrenci.lastName}`
-                        return (
-                          <button
-                            key={ogrenci.id}
-                            type="button"
-                            onClick={() => handleSelect(ogrenci)}
-                            className={`w-full text-left px-4 py-3 text-sm hover:bg-indigo-50 transition ${
-                              selectedStudent?.id === ogrenci.id
-                                ? 'bg-indigo-50 text-indigo-800 font-medium'
-                                : 'text-gray-800'
-                            }`}
-                          >
-                            {fullName}
-                          </button>
-                        )
-                      })
-                    )}
-                  </div>
-                )}
-
-                {selectedStudent && (
-                  <p className="mt-2 text-sm text-green-600 font-medium">
-                    Seçilen: {selectedStudent.firstName} {selectedStudent.lastName}
-                  </p>
-                )}
-
-                {loadError && (
-                  <p className="mt-2 text-sm text-red-600">{loadError}</p>
-                )}
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-indigo-500">
+                Veli Bilgileri
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Veli Adı <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.veliAd}
+                    onChange={(e) => updateField('veliAd', e.target.value.toLocaleUpperCase('tr-TR'))}
+                    className={inputClass}
+                    placeholder="Veli adı"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Veli Soyadı <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.veliSoyad}
+                    onChange={(e) => updateField('veliSoyad', e.target.value.toLocaleUpperCase('tr-TR'))}
+                    className={inputClass}
+                    placeholder="Veli soyadı"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Veli Telefon Numarası <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    value={form.veliTelefon}
+                    onChange={(e) =>
+                      updateField('veliTelefon', e.target.value.replace(/\D/g, '').slice(0, 10))
+                    }
+                    className={inputClass}
+                    placeholder="5XXXXXXXXX (10 hane)"
+                  />
+                </div>
               </div>
             </section>
 
@@ -305,7 +303,7 @@ export default function YazOkuluBasvuruForm() {
             <div>
               <button
                 type="submit"
-                disabled={isSubmitting || !kvkkOnay || !selectedStudent || loadingOgrenciler}
+                disabled={isSubmitting || !kvkkOnay}
                 className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg shadow-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Başvurunuz Gönderiliyor...' : 'Başvuruyu Gönder'}

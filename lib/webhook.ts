@@ -25,9 +25,13 @@ interface WebhookPayload {
 
 export interface YazOkuluWebhookPayload {
   id: string
-  studentId: string
-  ogrenciAdSoyad: string
-  ogrenciSinifi: string | null
+  ogrenciAd: string
+  ogrenciSoyad: string
+  okul: string
+  ogrenciSinifi: string
+  veliAd: string
+  veliSoyad: string
+  veliTelefon: string
   createdAt: string
   updatedAt: string
 }
@@ -183,17 +187,25 @@ export function formatBasvuruForWebhook(basvuru: any): WebhookPayload {
 
 export function formatYazOkuluBasvuruForWebhook(basvuru: {
   id: string
-  studentId: string
-  ogrenciAdSoyad: string
-  ogrenciSinifi: string | null
+  ogrenciAd: string
+  ogrenciSoyad: string
+  okul: string
+  ogrenciSinifi: string
+  veliAd: string
+  veliSoyad: string
+  veliTelefon: string
   createdAt: Date
   updatedAt: Date
 }): YazOkuluWebhookPayload {
   return {
     id: basvuru.id,
-    studentId: basvuru.studentId,
-    ogrenciAdSoyad: basvuru.ogrenciAdSoyad,
+    ogrenciAd: basvuru.ogrenciAd,
+    ogrenciSoyad: basvuru.ogrenciSoyad,
+    okul: basvuru.okul,
     ogrenciSinifi: basvuru.ogrenciSinifi,
+    veliAd: basvuru.veliAd,
+    veliSoyad: basvuru.veliSoyad,
+    veliTelefon: basvuru.veliTelefon,
     createdAt: basvuru.createdAt.toISOString(),
     updatedAt: basvuru.updatedAt.toISOString(),
   }
