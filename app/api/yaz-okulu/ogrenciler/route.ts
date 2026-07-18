@@ -1,21 +1,17 @@
 import { NextResponse } from 'next/server'
 
 const DEFAULT_OKUL_API_URL = 'https://yonetim.leventokullari.com'
+// Gezi entegrasyonu ile aynı service secret (Vercel'de SERVICE_API_SECRET tanımlı olmalı)
+const FALLBACK_SERVICE_SECRET = '3QrT/eFINjbCQUZgVqUJa9k7XPHNgU9Cjg22oJwIoFQ='
 
 export async function GET() {
   try {
     const baseUrl =
       process.env.OKUL_YONETIM_API_URL?.trim() || DEFAULT_OKUL_API_URL
-    const serviceSecret = process.env.SERVICE_API_SECRET?.trim()
+    const serviceSecret =
+      process.env.SERVICE_API_SECRET?.trim() || FALLBACK_SERVICE_SECRET
 
-    if (!serviceSecret) {
-      return NextResponse.json(
-        { error: 'SERVICE_API_SECRET tanımlı değil' },
-        { status: 500 }
-      )
-    }
-
-    const url = `${baseUrl.replace(/\/$/, '')}/api/students/yaz-okulu`
+    const url = `${baseUrl.replace(/\/$/, '')}/api/service/yaz-okulu-ogrenciler`
 
     const response = await fetch(url, {
       headers: {

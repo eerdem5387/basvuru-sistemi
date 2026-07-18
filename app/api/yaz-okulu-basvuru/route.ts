@@ -39,13 +39,11 @@ async function fetchStudentFromOkul(studentId: string) {
   const baseUrl =
     process.env.OKUL_YONETIM_API_URL?.trim() ||
     'https://yonetim.leventokullari.com'
-  const serviceSecret = process.env.SERVICE_API_SECRET?.trim()
+  const serviceSecret =
+    process.env.SERVICE_API_SECRET?.trim() ||
+    '3QrT/eFINjbCQUZgVqUJa9k7XPHNgU9Cjg22oJwIoFQ='
 
-  if (!serviceSecret) {
-    return null
-  }
-
-  const url = `${baseUrl.replace(/\/$/, '')}/api/students/yaz-okulu?id=${encodeURIComponent(studentId)}`
+  const url = `${baseUrl.replace(/\/$/, '')}/api/service/yaz-okulu-ogrenciler?id=${encodeURIComponent(studentId)}`
 
   const response = await fetch(url, {
     headers: {
