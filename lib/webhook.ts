@@ -145,16 +145,20 @@ export async function sendYazOkuluWebhook(
   payload: YazOkuluWebhookPayload,
   retries: number = 3
 ): Promise<WebhookResult> {
-  const webhookUrl =
-    process.env.YAZ_OKULU_WEBHOOK_URL ||
-    (process.env.OKUL_YONETIM_API_URL
-      ? `${process.env.OKUL_YONETIM_API_URL.replace(/\/$/, '')}/api/webhook/yaz-okulu-basvuru`
-      : '')
+  const burslulukWebhookUrl = process.env.WEBHOOK_URL?.trim()
+  const derivedFromBursluluk = burslulukWebhookUrl
+    ? burslulukWebhookUrl.replace(/\/api\/webhook\/basvuru\/?$/, '/api/webhook/yaz-okulu-basvuru')
+    : ''
 
-  if (!webhookUrl) {
-    console.error('[Webhook] ❌ YAZ_OKULU_WEBHOOK_URL / OKUL_YONETIM_API_URL tanımlı değil')
-    return { success: false, error: 'Yaz okulu webhook URL tanımlı değil' }
-  }
+  const webhookUrl =
+    process.env.YAZ_OKULU_WEBHOOK_URL?.trim() ||
+    (process.env.OKUL_YONETIM_API_URL?.trim()
+      ? `${process.env.OKUL_YONETIM_API_URL.replace(/\/$/, '')}/api/webhook/yaz-okulu-basvuru`
+      : '') ||
+    (derivedFromBursluluk.includes('yaz-okulu-basvuru') ? derivedFromBursluluk : '') ||
+    'https://yonetim.leventokullari.com/api/webhook/yaz-okulu-basvuru'
+
+  console.log(`[Webhook] Yaz okulu hedef: ${webhookUrl}`)
 
   return postWebhook(webhookUrl, payload, payload.id, retries)
 }

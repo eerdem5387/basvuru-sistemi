@@ -5,11 +5,6 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 const siniflar = [
-  'Anaokulu',
-  '1. Sınıf',
-  '2. Sınıf',
-  '3. Sınıf',
-  '4. Sınıf',
   '5. Sınıf',
   '6. Sınıf',
   '7. Sınıf',
