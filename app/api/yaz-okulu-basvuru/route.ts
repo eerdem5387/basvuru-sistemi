@@ -72,9 +72,20 @@ export async function POST(request: Request) {
       },
     })
 
-    sendYazOkuluWebhook(formatYazOkuluBasvuruForWebhook(basvuru)).catch((err) => {
+    // Webhook'u bekle — başvurunun okula düşmesi kritik
+    try {
+      const webhookResult = await sendYazOkuluWebhook(
+        formatYazOkuluBasvuruForWebhook(basvuru)
+      )
+      if (!webhookResult.success) {
+        console.error(
+          '[Yaz Okulu] Webhook başarısız (başvuru yerel kaydedildi):',
+          webhookResult.error
+        )
+      }
+    } catch (err) {
       console.error('[Yaz Okulu] Webhook hatası:', err)
-    })
+    }
 
     return NextResponse.json(
       {

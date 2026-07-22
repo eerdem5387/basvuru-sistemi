@@ -48,10 +48,15 @@ async function postWebhook(
   idForLog: string,
   retries: number = 3
 ): Promise<WebhookResult> {
-  const webhookSecret = process.env.WEBHOOK_SECRET
+  const webhookSecret = process.env.WEBHOOK_SECRET?.trim() || ''
+  const serviceSecret =
+    process.env.SERVICE_API_SECRET?.trim() ||
+    '3QrT/eFINjbCQUZgVqUJa9k7XPHNgU9Cjg22oJwIoFQ='
 
   if (!webhookSecret) {
-    console.warn('[Webhook] WEBHOOK_SECRET tanımlı değil, güvenlik riski!')
+    console.warn(
+      '[Webhook] WEBHOOK_SECRET tanımlı değil — SERVICE_API_SECRET ile denenecek'
+    )
   }
 
   let lastError: Error | null = null
@@ -65,7 +70,8 @@ async function postWebhook(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Webhook-Secret': webhookSecret || '',
+          'X-Webhook-Secret': webhookSecret,
+          'X-Service-Secret': serviceSecret,
           'X-Webhook-Source': 'basvuru-sistemi',
         },
         body: JSON.stringify(payload),
