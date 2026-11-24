@@ -416,7 +416,7 @@ export default function BurslulukBasvuruForm() {
 
       <main className="relative mx-auto -mt-16 max-w-6xl px-4 pb-16 sm:-mt-20 sm:px-6">
         {success ? (
-          <SuccessCard id={success.id} ogrenci={success.ogrenci} values={values} onReset={resetForm} />
+          <SuccessCard ogrenci={success.ogrenci} values={values} onReset={resetForm} />
         ) : (
           <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
             {/* Yan panel */}
@@ -934,7 +934,7 @@ function ReviewDialog({
   )
 }
 
-function SuccessCard({ id, ogrenci, values, onReset }: { id: string; ogrenci: string; values: Values; onReset: () => void }) {
+function SuccessCard({ ogrenci, values, onReset }: { ogrenci: string; values: Values; onReset: () => void }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -955,12 +955,6 @@ function SuccessCard({ id, ogrenci, values, onReset }: { id: string; ogrenci: st
         <p className="mt-2 text-slate-600">
           <span className="font-semibold text-slate-900">{ogrenci}</span> için bursluluk sınavı başvurusu başarıyla alındı.
         </p>
-        {id && (
-          <p className="mt-5 inline-flex items-center gap-2 rounded-lg bg-slate-50 px-4 py-2 text-sm text-slate-600 ring-1 ring-slate-200">
-            Başvuru kodu:
-            <span className="font-mono font-bold tracking-wider text-slate-900">{id.slice(-8).toUpperCase()}</span>
-          </p>
-        )}
       </div>
       <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-6 sm:px-10">
         <Summary values={values} />
