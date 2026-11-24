@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { BURSLULUK_DONEM } from "@/lib/basvuru-sabitleri"
 import * as XLSX from "xlsx"
 
 export async function GET(request: Request) {
@@ -22,7 +23,8 @@ export async function GET(request: Request) {
     const okul = searchParams.get('okul')
     
     // Filtreleme için where koşulları
-    const where: any = {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { donem: BURSLULUK_DONEM }
     
     if (tarihBaslangic || tarihBitis) {
       where.createdAt = {}
@@ -43,7 +45,7 @@ export async function GET(request: Request) {
     }
     
     const basvurular = await prisma.basvuru.findMany({
-      where: Object.keys(where).length > 0 ? where : undefined,
+      where,
       orderBy: {
         createdAt: 'desc'
       }
@@ -65,7 +67,11 @@ export async function GET(request: Request) {
       'Anne Meslek': b.anneMeslek,
       'Anne İş Adresi': b.anneIsAdresi || '-',
       'Anne Cep Tel': b.anneCepTel,
-      'E-posta': b.email,
+      'İl': b.adresIl || '-',
+      'İlçe': b.adresIlce || '-',
+      'Mahalle / Köy': b.adresMahalle || '-',
+      'Adres Detayı': b.adresDetay || '-',
+      'E-posta': b.email || '-',
       'Başvuru Tarihi': new Date(b.createdAt).toLocaleString('tr-TR'),
     }))
     

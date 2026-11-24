@@ -21,6 +21,10 @@ interface Basvuru {
   anneMeslek: string
   anneIsAdresi: string
   anneCepTel: string
+  adresIl?: string
+  adresIlce?: string
+  adresMahalle?: string
+  adresDetay?: string
   email: string
   createdAt: string
   updatedAt: string
@@ -429,7 +433,7 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{basvuru.email}</div>
+                        <div className="text-sm text-gray-900">{basvuru.adresIlce ? `${basvuru.adresIlce} / ${basvuru.adresMahalle}` : basvuru.email || '-'}</div>
                         <div className="text-sm text-gray-500">{basvuru.babaCepTel}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -544,13 +548,24 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              {/* Adres Bilgileri */}
+              {selectedBasvuru.adresIlce && (
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 pb-2 border-b">Adres Bilgileri</h3>
+                  <p className="font-medium text-gray-900">
+                    {selectedBasvuru.adresMahalle}, {selectedBasvuru.adresIlce} / {selectedBasvuru.adresIl}
+                  </p>
+                  <p className="text-gray-700 mt-1">{selectedBasvuru.adresDetay}</p>
+                </div>
+              )}
+
               {/* İletişim Bilgileri */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 pb-2 border-b">İletişim Bilgileri</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">E-posta</p>
-                    <p className="font-medium text-gray-900">{selectedBasvuru.email}</p>
+                    <p className="font-medium text-gray-900">{selectedBasvuru.email || '-'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Başvuru Tarihi</p>

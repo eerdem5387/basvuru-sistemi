@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma"
 import { basvuruSchema } from "@/lib/validations"
 import { z } from "zod"
 import { sendWebhook, formatBasvuruForWebhook } from "@/lib/webhook"
+import { ADRES_IL } from "@/lib/rize-adres"
+import { BURSLULUK_DONEM } from "@/lib/basvuru-sabitleri"
 
 // Rate limiting için basit bir in-memory cache
 const rateLimit = new Map<string, { count: number; resetTime: number }>()
@@ -28,6 +30,8 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
+const DUPLICATE_MESSAGE = "Bu TC Kimlik No ile bu dönemin bursluluk sınavına zaten başvuru yapılmış."
+
 export async function POST(request: Request) {
   try {
     // Rate limiting kontrolü
@@ -42,48 +46,40 @@ export async function POST(request: Request) {
 
     const body = await request.json()
     
-    // Validasyon
-    const validatedData = basvuruSchema.parse(body)
-    
-    // Telefon numaraları zaten 10 hane olarak geliyor (frontend'de kontrol ediliyor)
-    const babaCepTel = validatedData.babaCepTel
-    const anneCepTel = validatedData.anneCepTel
-    
-    // TC Kimlik No ile daha önce başvuru yapılmış mı kontrol et
+    // Validasyon (istemciyle aynı şema)
+    const v = basvuruSchema.parse(body)
+
+    // Aynı öğrenci bu dönemin sınavına daha önce başvurmuş mu?
+    // (Önceki dönemlerdeki başvurular yeni başvuruya engel değildir.)
     const existingBasvuru = await prisma.basvuru.findUnique({
-      where: { ogrenciTc: validatedData.ogrenciTc }
+      where: { ogrenciTc_donem: { ogrenciTc: v.ogrenciTc, donem: BURSLULUK_DONEM } }
     })
-    
+
     if (existingBasvuru) {
       return NextResponse.json(
-        { error: "Bu TC Kimlik No ile daha önce başvuru yapılmış." },
-        { status: 400 }
+        { error: DUPLICATE_MESSAGE, details: [{ path: ["ogrenciTc"], message: DUPLICATE_MESSAGE }] },
+        { status: 409 }
       )
     }
-    
-    // 4. sınıf için kota kontrolü
-    if (validatedData.ogrenciSinifi === "4. Sınıf") {
-      const MAX_4_SINIF_QUOTA = 560
-      const count = await prisma.basvuru.count({
-        where: {
-          ogrenciSinifi: "4. Sınıf"
-        }
-      })
-      
-      if (count >= MAX_4_SINIF_QUOTA) {
-        return NextResponse.json(
-          { error: "4. sınıflar için maksimum başvuru sayısına ulaşıldı. İlginiz için teşekkürler." },
-          { status: 400 }
-        )
-      }
-    }
-    
+
     // Başvuruyu kaydet
     const basvuru = await prisma.basvuru.create({
       data: {
-        ...validatedData,
-        babaCepTel,
-        anneCepTel,
+        ogrenciAdSoyad: `${v.ogrenciAd} ${v.ogrenciSoyad}`,
+        ogrenciTc: v.ogrenciTc,
+        donem: BURSLULUK_DONEM,
+        okul: v.okul,
+        ogrenciSinifi: v.ogrenciSinifi,
+        anneAdSoyad: `${v.anneAd} ${v.anneSoyad}`,
+        anneMeslek: v.anneMeslek,
+        anneCepTel: v.anneCepTel,
+        babaAdSoyad: `${v.babaAd} ${v.babaSoyad}`,
+        babaMeslek: v.babaMeslek,
+        babaCepTel: v.babaCepTel,
+        adresIl: ADRES_IL,
+        adresIlce: v.adresIlce,
+        adresMahalle: v.adresMahalle,
+        adresDetay: v.adresDetay,
       }
     })
     
@@ -95,19 +91,17 @@ export async function POST(request: Request) {
       hasSecret: !!process.env.WEBHOOK_SECRET
     })
     
-    sendWebhook(formatBasvuruForWebhook(basvuru))
-      .then((result) => {
-        if (result.success) {
-          console.log('[Başvuru] ✅ Webhook başarıyla gönderildi:', basvuru.id)
-        } else {
-          console.error('[Başvuru] ❌ Webhook gönderilemedi:', result.error, 'Retries:', result.retries)
-        }
-      })
-      .catch((error) => {
-        // Webhook hatası loglanır ama kullanıcıya gösterilmez
-        console.error('[Başvuru] ❌ Webhook asenkron gönderim hatası:', error)
-    })
-    
+    // Webhook'u bekle: sunucusuz ortamda yanıt döndükten sonra arka plan işi kesilebilir.
+    // Hata olsa bile başvuru kaydedildi; okul yönetim sistemi /sync ile sonradan çekebilir.
+    try {
+      const result = await sendWebhook(formatBasvuruForWebhook(basvuru))
+      if (!result.success) {
+        console.error('[Başvuru] ❌ Webhook gönderilemedi:', result.error, 'Retries:', result.retries)
+      }
+    } catch (error) {
+      console.error('[Başvuru] ❌ Webhook gönderim hatası:', error)
+    }
+
     return NextResponse.json(
       { 
         success: true, 
@@ -119,7 +113,10 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Formu eksiksiz ve doğru doldurunuz.", details: error.issues },
+        {
+          error: "Formu eksiksiz ve doğru doldurunuz.",
+          details: error.issues.map((i) => ({ path: i.path.map(String), message: i.message })),
+        },
         { status: 400 }
       )
     }
@@ -128,8 +125,8 @@ export async function POST(request: Request) {
     if (error && typeof error === 'object' && 'code' in error) {
       if (error.code === 'P2002') {
         return NextResponse.json(
-          { error: "Bu TC Kimlik No ile daha önce başvuru yapılmış." },
-          { status: 400 }
+          { error: DUPLICATE_MESSAGE, details: [{ path: ["ogrenciTc"], message: DUPLICATE_MESSAGE }] },
+          { status: 409 }
         )
       }
       if (error.code === 'P1001' || error.code === 'P1002') {

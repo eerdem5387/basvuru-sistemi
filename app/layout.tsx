@@ -1,18 +1,29 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
 const inter = Inter({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
 });
 
+const PAGE_TITLE =
+  process.env.NEXT_PUBLIC_APPLICATION_MODE === "bursluluk"
+    ? "Bursluluk Sınavı Başvuru Formu - Levent Koleji"
+    : "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#121a4f",
+};
+
 export const metadata: Metadata = {
-  title: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
-  description: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
+  title: PAGE_TITLE,
+  description: PAGE_TITLE,
   openGraph: {
-    title: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
-    description: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
+    title: PAGE_TITLE,
+    description: PAGE_TITLE,
     url: 'https://basvuru.leventokullari.com',
     siteName: 'Levent Koleji Başvuru Sistemi',
     images: [
@@ -28,8 +39,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
-    description: "2026-2027 Yaz Okulu Başvuru Formu - Levent Koleji",
+    title: PAGE_TITLE,
+    description: PAGE_TITLE,
     images: ['/logo.png'],
   },
 };

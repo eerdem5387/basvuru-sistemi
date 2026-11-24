@@ -10,7 +10,9 @@ datasource db {
 model Basvuru {
   id               String   @id @default(cuid())
   ogrenciAdSoyad   String
-  ogrenciTc        String   @unique
+  ogrenciTc        String
+  /// Sınav dönemi (örn. "2027-2028"). Aynı öğrenci her dönem bir kez başvurabilir.
+  donem            String   @default("2026-2027")
   okul             String
   ogrenciSinifi    String
   ogrenciSube      String   @default("Belirtilmedi")
@@ -23,11 +25,17 @@ model Basvuru {
   anneMeslek       String
   anneIsAdresi     String   @default("")
   anneCepTel       String
-  email            String
+  adresIl          String   @default("")
+  adresIlce        String   @default("")
+  adresMahalle     String   @default("")
+  adresDetay       String   @default("")
+  email            String   @default("")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
+  @@unique([ogrenciTc, donem])
   @@index([ogrenciTc])
+  @@index([donem])
   @@index([email])
 }
 

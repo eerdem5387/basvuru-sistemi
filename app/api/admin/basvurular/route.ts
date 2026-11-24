@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { BURSLULUK_DONEM } from "@/lib/basvuru-sabitleri"
 
 export async function GET() {
   try {
@@ -13,7 +14,9 @@ export async function GET() {
       )
     }
     
+    // Bu panel yalnızca aktif dönemi gösterir; geçmiş dönemler okul yönetim sistemindeki arşivdedir.
     const basvurular = await prisma.basvuru.findMany({
+      where: { donem: BURSLULUK_DONEM },
       orderBy: {
         createdAt: 'desc'
       }

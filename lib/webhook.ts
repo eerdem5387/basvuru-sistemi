@@ -6,6 +6,7 @@ interface WebhookPayload {
   id: string
   ogrenciAdSoyad: string
   ogrenciTc: string
+  donem: string
   okul: string
   ogrenciSinifi: string
   ogrenciSube: string
@@ -18,6 +19,10 @@ interface WebhookPayload {
   anneMeslek: string
   anneIsAdresi: string
   anneCepTel: string
+  adresIl: string
+  adresIlce: string
+  adresMahalle: string
+  adresDetay: string
   email: string
   createdAt: string
   updatedAt: string
@@ -177,6 +182,7 @@ export function formatBasvuruForWebhook(basvuru: any): WebhookPayload {
     id: basvuru.id,
     ogrenciAdSoyad: basvuru.ogrenciAdSoyad,
     ogrenciTc: basvuru.ogrenciTc,
+    donem: basvuru.donem,
     okul: basvuru.okul,
     ogrenciSinifi: basvuru.ogrenciSinifi,
     ogrenciSube: basvuru.ogrenciSube,
@@ -189,7 +195,11 @@ export function formatBasvuruForWebhook(basvuru: any): WebhookPayload {
     anneMeslek: basvuru.anneMeslek,
     anneIsAdresi: basvuru.anneIsAdresi,
     anneCepTel: basvuru.anneCepTel,
-    email: basvuru.email,
+    adresIl: basvuru.adresIl ?? '',
+    adresIlce: basvuru.adresIlce ?? '',
+    adresMahalle: basvuru.adresMahalle ?? '',
+    adresDetay: basvuru.adresDetay ?? '',
+    email: basvuru.email ?? '',
     createdAt: basvuru.createdAt.toISOString(),
     updatedAt: basvuru.updatedAt.toISOString(),
   }
