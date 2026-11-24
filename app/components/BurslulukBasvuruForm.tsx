@@ -74,14 +74,20 @@ const OKUL_OPTIONS: ComboOption[] = OKULLAR.map((o) => {
 })
 const MESLEK_OPTIONS: ComboOption[] = MESLEKLER.map((m) => ({ value: m, label: m }))
 
-/** Okul türü ile sınıf düzeyinin uyumunu kontrol eder (engellemez, yalnızca uyarır). */
+/** Okul türü ile sınıf düzeyinin uyumunu kontrol eder (engellemez, yalnızca uyarır).
+ *  Birden fazla kademesi olan okullarda (örn. "… Lisesi, İlkokulu ve Ortaokulu") tüm kademeler dikkate alınır. */
 function okulSinifUyarisi(okul: string, sinif: string): string | undefined {
   if (!okul || !sinif) return
   const n = parseInt(sinif, 10)
   const ad = okul.toLocaleLowerCase('tr-TR')
-  if (ad.endsWith('ilkokulu') && n > 4) return 'Seçtiğiniz okul bir ilkokul; sınıf düzeyini kontrol ediniz.'
-  if (ad.endsWith('ortaokulu') && (n < 5 || n > 8)) return 'Seçtiğiniz okul bir ortaokul; sınıf düzeyini kontrol ediniz.'
-  if (ad.endsWith('lisesi') && n < 9) return 'Seçtiğiniz okul bir lise; sınıf düzeyini kontrol ediniz.'
+  const kademeler = [
+    { var: ad.includes('ilkokul'), min: 1, max: 4 },
+    { var: ad.includes('ortaokul'), min: 5, max: 8 },
+    { var: ad.includes('lise'), min: 9, max: 12 },
+  ].filter((k) => k.var)
+  if (kademeler.length === 0) return
+  if (kademeler.some((k) => n >= k.min && n <= k.max)) return
+  return 'Seçtiğiniz okulda bu sınıf düzeyi bulunmuyor görünüyor; okul ve sınıfı kontrol ediniz.'
 }
 
 // ---------------------------------------------------------------------------
