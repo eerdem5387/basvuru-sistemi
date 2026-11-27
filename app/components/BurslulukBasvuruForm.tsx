@@ -75,12 +75,6 @@ const OKUL_OPTIONS: ComboOption[] = OKULLAR.map((o) => {
   return { value: o, label: ad.join(' - '), meta: ilce }
 })
 const MESLEK_OPTIONS: ComboOption[] = MESLEKLER.map((m) => ({ value: m, label: m }))
-/** Oturumlar güne göre gruplanır: { "9 Ocak Cumartesi": [...] } */
-const OTURUM_GRUPLARI = OTURUMLAR.reduce<Record<string, (typeof OTURUMLAR)[number][]>>((acc, o) => {
-  const gun = o.gun.replace(' - ', ' ')
-  ;(acc[gun] ??= []).push(o)
-  return acc
-}, {})
 
 /** Okul türü ile sınıf düzeyinin uyumunu kontrol eder (engellemez, yalnızca uyarır).
  *  Birden fazla kademesi olan okullarda (örn. "… Lisesi, İlkokulu ve Ortaokulu") tüm kademeler dikkate alınır. */
@@ -564,33 +558,46 @@ export default function BurslulukBasvuruForm() {
                       error={shownError('oturum')}
                       hint="Öğrenci yalnızca seçtiği oturumda sınava girebilir."
                     >
-                      <select
-                        id="oturum"
-                        value={values.oturum}
-                        onChange={(e) => {
-                          set('oturum', e.target.value)
-                          touch('oturum')
-                        }}
-                        onBlur={() => touch('oturum')}
-                        aria-invalid={!!shownError('oturum') || undefined}
-                        aria-describedby="oturum-msg"
-                        className={`field-control ${values.oturum ? '' : 'text-slate-400'} ${
-                          shownError('oturum') ? 'field-invalid' : ''
-                        }`}
-                      >
-                        <option value="" disabled>
-                          Oturum seçiniz
-                        </option>
-                        {Object.entries(OTURUM_GRUPLARI).map(([gun, list]) => (
-                          <optgroup key={gun} label={gun} className="text-slate-900">
-                            {list.map((o) => (
-                              <option key={o.value} value={o.value} className="text-slate-900">
-                                {gun} · {o.oturum}
-                              </option>
-                            ))}
-                          </optgroup>
-                        ))}
-                      </select>
+                      <div role="radiogroup" aria-label="Sınav oturumu" className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
+                        {OTURUMLAR.map((o, i) => {
+                          const checked = values.oturum === o.value
+                          const [oturumAdi, saat] = o.oturum.split(' - ')
+                          return (
+                            <button
+                              key={o.value}
+                              id={i === 0 ? 'oturum' : undefined}
+                              type="button"
+                              role="radio"
+                              aria-checked={checked}
+                              aria-label={oturumEtiketi(o)}
+                              aria-describedby="oturum-msg"
+                              onClick={() => {
+                                set('oturum', o.value)
+                                touch('oturum')
+                              }}
+                              className={`relative flex flex-col items-start gap-0.5 rounded-xl border py-3 pl-4 pr-10 text-left transition focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/20 sm:gap-1 sm:py-4 ${
+                                checked
+                                  ? 'border-brand-600 bg-brand-600 text-white shadow-md shadow-brand-600/25'
+                                  : shownError('oturum')
+                                    ? 'border-rose-300 bg-white text-slate-700 hover:border-rose-400'
+                                    : 'border-slate-300 bg-white text-slate-700 hover:border-brand-400'
+                              }`}
+                            >
+                              <span className={`text-sm font-semibold ${checked ? 'text-white' : 'text-slate-900'}`}>
+                                {o.gun.replace(' - ', ' ')}
+                              </span>
+                              <span className={`text-sm ${checked ? 'text-brand-50' : 'text-slate-600'}`}>
+                                {oturumAdi} · <span className="font-semibold">{saat}</span>
+                              </span>
+                              {checked && (
+                                <svg className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-white sm:top-3 sm:translate-y-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.86-9.81a.75.75 0 00-1.22-.88l-3.24 4.5-1.6-1.6a.75.75 0 10-1.06 1.06l2.22 2.22a.75.75 0 001.14-.09l3.76-5.21z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </button>
+                          )
+                        })}
+                      </div>
                     </Field>
                   </div>
                 </div>
