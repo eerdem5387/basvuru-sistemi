@@ -20,6 +20,24 @@ export const SINIFLAR = [
   '11. Sınıf',
 ] as const
 
+/**
+ * Sınav oturumları. `gun` ve `oturum` başvuruya ayrı ayrı kaydedilir ve okul yönetim
+ * sistemine aynen gönderilir. 9 Ocak 2027 Cumartesi, 10 Ocak 2027 Pazar'dır.
+ */
+export const OTURUMLAR = [
+  { value: '9-ocak-1', gun: '9 Ocak - Cumartesi', oturum: '1. Oturum - 09.30' },
+  { value: '9-ocak-2', gun: '9 Ocak - Cumartesi', oturum: '2. Oturum - 13.30' },
+  { value: '10-ocak-1', gun: '10 Ocak - Pazar', oturum: '1. Oturum - 09.30' },
+] as const
+
+export type OturumSecenegi = (typeof OTURUMLAR)[number]
+
+export const oturumBul = (value: string): OturumSecenegi | undefined =>
+  OTURUMLAR.find((o) => o.value === value)
+
+/** "9 Ocak Cumartesi · 1. Oturum - 09.30" */
+export const oturumEtiketi = (o: OturumSecenegi) => `${o.gun.replace(' - ', ' ')} · ${o.oturum}`
+
 export const OKULLAR: readonly string[] = [
   "Rize - Ardeşen - Alparslan Ortaokulu",
   "Rize - Ardeşen - Ardeşen Anadolu İmam Hatip Lisesi",

@@ -59,6 +59,8 @@ export async function GET(request: Request) {
       'Okul': b.okul,
       'Sınıf': b.ogrenciSinifi,
       'Şube': b.ogrenciSube,
+      'Sınav Günü': b.sinavGunu || '-',
+      'Oturum': b.oturum || '-',
       'Baba Ad Soyad': b.babaAdSoyad,
       'Baba Meslek': b.babaMeslek,
       'Baba İş Adresi': b.babaIsAdresi || '-',

@@ -4,7 +4,7 @@ import { basvuruSchema } from "@/lib/validations"
 import { z } from "zod"
 import { sendWebhook, formatBasvuruForWebhook } from "@/lib/webhook"
 import { ADRES_IL } from "@/lib/rize-adres"
-import { BURSLULUK_DONEM } from "@/lib/basvuru-sabitleri"
+import { BURSLULUK_DONEM, oturumBul } from "@/lib/basvuru-sabitleri"
 
 // Rate limiting için basit bir in-memory cache
 const rateLimit = new Map<string, { count: number; resetTime: number }>()
@@ -48,6 +48,8 @@ export async function POST(request: Request) {
     
     // Validasyon (istemciyle aynı şema)
     const v = basvuruSchema.parse(body)
+    // Şema oturum değerini listeye karşı doğruladığı için burada her zaman bulunur
+    const oturum = oturumBul(v.oturum)!
 
     // Aynı öğrenci bu dönemin sınavına daha önce başvurmuş mu?
     // (Önceki dönemlerdeki başvurular yeni başvuruya engel değildir.)
@@ -70,6 +72,8 @@ export async function POST(request: Request) {
         donem: BURSLULUK_DONEM,
         okul: v.okul,
         ogrenciSinifi: v.ogrenciSinifi,
+        sinavGunu: oturum.gun,
+        oturum: oturum.oturum,
         anneAdSoyad: `${v.anneAd} ${v.anneSoyad}`,
         anneMeslek: v.anneMeslek,
         anneCepTel: v.anneCepTel,

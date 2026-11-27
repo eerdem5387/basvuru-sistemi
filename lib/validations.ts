@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { MESLEKLER, OKULLAR, SINIFLAR } from "./basvuru-sabitleri"
+import { MESLEKLER, OKULLAR, OTURUMLAR, SINIFLAR } from "./basvuru-sabitleri"
 import { RIZE_MAHALLELER } from "./rize-adres"
 
 // ---------------------------------------------------------------------------
@@ -97,6 +97,10 @@ export const basvuruSchema = z
       .refine(tcKimlikValidator, "Geçersiz TC Kimlik No, lütfen kontrol ediniz"),
     okul: listeden(OKULLAR, "Lütfen listeden okul seçiniz"),
     ogrenciSinifi: listeden(SINIFLAR, "Lütfen sınıf seçiniz"),
+    oturum: listeden(
+      OTURUMLAR.map((o) => o.value),
+      "Lütfen katılmak istediğiniz sınav oturumunu seçiniz"
+    ),
 
     anneAd: isim("Anne adı"),
     anneSoyad: isim("Anne soyadı"),
@@ -138,6 +142,7 @@ export const ALAN_ETIKETLERI: Record<string, string> = {
   ogrenciTc: "Öğrenci TC Kimlik No",
   okul: "Okuduğu Okul",
   ogrenciSinifi: "Sınıfı",
+  oturum: "Sınav Oturumu",
   anneAd: "Anne Adı",
   anneSoyad: "Anne Soyadı",
   anneMeslek: "Anne Mesleği",

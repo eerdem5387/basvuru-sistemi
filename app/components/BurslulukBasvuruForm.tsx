@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import Combobox, { type ComboOption } from './form/Combobox'
 import { Field, Section, ValidIcon } from './form/fields'
-import { BURSLULUK_DONEM, MESLEKLER, OKULLAR, SINIFLAR } from '@/lib/basvuru-sabitleri'
+import { BURSLULUK_DONEM, MESLEKLER, OKULLAR, OTURUMLAR, SINIFLAR, oturumBul, oturumEtiketi } from '@/lib/basvuru-sabitleri'
 import { ADRES_IL, RIZE_ILCELER, RIZE_MAHALLELER } from '@/lib/rize-adres'
 import { ALAN_ETIKETLERI, basvuruSchema, formatIsim, formatTc, formatTelefon } from '@/lib/validations'
 
@@ -20,6 +20,7 @@ type Values = {
   ogrenciTc: string
   okul: string
   ogrenciSinifi: string
+  oturum: string
   anneAd: string
   anneSoyad: string
   anneMeslek: string
@@ -41,6 +42,7 @@ const EMPTY: Values = {
   ogrenciTc: '',
   okul: '',
   ogrenciSinifi: '',
+  oturum: '',
   anneAd: '',
   anneSoyad: '',
   anneMeslek: '',
@@ -56,7 +58,7 @@ const EMPTY: Values = {
 }
 
 const SECTIONS = [
-  { id: 'ogrenci', title: 'Öğrenci Bilgileri', fields: ['ogrenciAd', 'ogrenciSoyad', 'ogrenciTc', 'okul', 'ogrenciSinifi'] },
+  { id: 'ogrenci', title: 'Öğrenci Bilgileri', fields: ['ogrenciAd', 'ogrenciSoyad', 'ogrenciTc', 'okul', 'ogrenciSinifi', 'oturum'] },
   {
     id: 'veli',
     title: 'Veli Bilgileri',
@@ -73,6 +75,12 @@ const OKUL_OPTIONS: ComboOption[] = OKULLAR.map((o) => {
   return { value: o, label: ad.join(' - '), meta: ilce }
 })
 const MESLEK_OPTIONS: ComboOption[] = MESLEKLER.map((m) => ({ value: m, label: m }))
+/** Oturumlar güne göre gruplanır: { "9 Ocak Cumartesi": [...] } */
+const OTURUM_GRUPLARI = OTURUMLAR.reduce<Record<string, (typeof OTURUMLAR)[number][]>>((acc, o) => {
+  const gun = o.gun.replace(' - ', ' ')
+  ;(acc[gun] ??= []).push(o)
+  return acc
+}, {})
 
 /** Okul türü ile sınıf düzeyinin uyumunu kontrol eder (engellemez, yalnızca uyarır).
  *  Birden fazla kademesi olan okullarda (örn. "… Lisesi, İlkokulu ve Ortaokulu") tüm kademeler dikkate alınır. */
@@ -549,6 +557,42 @@ export default function BurslulukBasvuruForm() {
                       })}
                     </div>
                   </Field>
+                  <div className="sm:col-span-2 rounded-2xl border border-sky-200 bg-sky-50 p-4 sm:p-5">
+                    <Field
+                      id="oturum"
+                      label="Katılmak İstediği Sınav Oturumu"
+                      error={shownError('oturum')}
+                      hint="Öğrenci yalnızca seçtiği oturumda sınava girebilir."
+                    >
+                      <select
+                        id="oturum"
+                        value={values.oturum}
+                        onChange={(e) => {
+                          set('oturum', e.target.value)
+                          touch('oturum')
+                        }}
+                        onBlur={() => touch('oturum')}
+                        aria-invalid={!!shownError('oturum') || undefined}
+                        aria-describedby="oturum-msg"
+                        className={`field-control ${values.oturum ? '' : 'text-slate-400'} ${
+                          shownError('oturum') ? 'field-invalid' : ''
+                        }`}
+                      >
+                        <option value="" disabled>
+                          Oturum seçiniz
+                        </option>
+                        {Object.entries(OTURUM_GRUPLARI).map(([gun, list]) => (
+                          <optgroup key={gun} label={gun} className="text-slate-900">
+                            {list.map((o) => (
+                              <option key={o.value} value={o.value} className="text-slate-900">
+                                {gun} · {o.oturum}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    </Field>
+                  </div>
                 </div>
               </Section>
 
@@ -800,6 +844,10 @@ function summaryGroups(v: Values) {
         ['Okul', v.okul.split(' - ').slice(2).join(' - ')],
         ['Okul İlçesi', v.okul.split(' - ')[1] ?? ''],
         ['Sınıf', v.ogrenciSinifi],
+        ['Sınav Oturumu', (() => {
+          const o = oturumBul(v.oturum)
+          return o ? oturumEtiketi(o) : ''
+        })()],
       ],
     },
     {
